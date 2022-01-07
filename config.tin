@@ -33,6 +33,10 @@
 
 #READ {src/manualmapdoortext.tin};
 
+#READ {user/generalalias.tin};
+#READ {user/wizalias.tin};
+#READ {user/priestalias.tin};
+
 #SESSION {discworld} {discworld.starturtle.net} {4242};
 
 #FORMAT {log_file} {logs/active/%t.log} {%Y-%m-%d};
