@@ -1,0 +1,86 @@
+#CLASS {actions} {kill};
+#CLASS {actions} {open};
+
+#NOP ==[TPA Alerts]==
+#HIGHLIGHT {^There is a sudden white flash.  Your magical shield has broken.$} {bold red underscore};
+#HIGHLIGHT {^There is a sudden white flash around {(?!a passing wizard).+}.$} {bold red underscore};
+#ACTION {^There is a sudden white flash around {(?!a passing wizard).+}.$} {
+    #showme {\a};
+    #line {log} {$chat_file};
+};
+
+#NOP ==[T-Shop Alerts]==
+#HIGHLIGHT {Greasy sparks crawl over the %1 wall, and a door silently materialises.} {bold green underscore};
+#HIGHLIGHT {There is a doorway in the %1 wall leading into a curious shop.} {bold green underscore};
+ 
+#NOP ==[Incident Highlighting]==
+#HIGHLIGHT {^%1 grabs %2 from you.  You struggle briefly but %3 wrests it from your grip and makes for a hasty retreat.$} {bold red underscore};
+#HIGHLIGHT {^%1 grabs {his|her|its} %2.  You struggle briefly but {he|she|it} wrests it from your grip and makes for a hasty retreat.} {bold red underscore};
+#HIGHLIGHT {^%1 grabs your %2.  You struggle briefly but {she|he|it} wrests it from your grip and makes for a hasty retreat.} {bold red underscore};
+#HIGHLIGHT {^As %1 dies %2 drops %3 in shock.$} {bold green underscore};
+#HIGHLIGHT {^When you open the %1 you think you can hear a faint rumbling sound from it.$} {red underscore}; 
+#HIGHLIGHT {^Whoops!  You tried to carry too many things and fumbled %1} {red underscore};
+#HIGHLIGHT {%1 juggles around his stuff and fumbles %2} {red underscore}; 
+
+#NOP ==[Command Color Highlighting]==
+#SUB {%w %w with a total of %* item} {<148>%1 %2<099> with a total of <148>%3<099> item};
+
+#NOP ==[Truffle Found]==
+#HIGHLIGHT {The young truffle pig unearths a truffle from the ground.} {bold green};
+
+#NOP ==[Attention Soul(s)]==
+#ACTION {^{(?!Ryattenoki).+} tugs on your sleeve in a desperate attempt to get some attention.$} {
+    #showme {\a};
+};
+
+#NOP ==[Copperhead Mines]==
+#SUB {you think that %1 of the surrounding crates contain} {you think that <138>%1<099> of the surrounding crates contain};
+#HIGHLIGHT {Something doesn't smell right.  You take a sniff but the faint odour of rotten eggs makes you cough.} {bold green underscore};
+#HIGHLIGHT {Somewhere above you, you hear the rumble of falling rock.} {bold green underscore};
+#ACTION {Something doesn't smell right.  You take a sniff but the faint odour of rotten eggs makes you cough.} {
+    #showme {\a};
+};
+#ACTION {Somewhere above you, you hear the rumble of falling rock.} {
+    #showme {\a};
+};
+
+#NOP ==[Gemcutting/Finesmithing]==
+#HIGHLIGHT {You take the diamond-tipped chisel from your roll of gemcutting tools and delicately chip %1} {bold green};
+#HIGHLIGHT {You take the diamond-tipped chisel from your roll of gemcutting tools and chip away %1} {bold red};
+#HIGHLIGHT {You take the diamond-tipped chisel from your roll of gemcutting tools and, struggling with %1} {bold red};
+#SUB {You estimate that the %1 is worth A$%2.  You} {You estimate that the <149>%1<099> is worth A$<139>%2<099>.  You};
+
+#NOP ==[Achievements]==
+#ACTION {^It is your turn to fight... enter the combat ring.$} {
+    #showme {\a};
+}
+#ACTION {^The %1 camel gallops away abruptly.$} {
+    #showme {[Pushover] %0};
+}
+
+#NOP ==[PK Actions]==
+#HIGHLIGHT {You reach towards your goal but apuse suddenly as %1 seems to sense something.  {She|He|It} doesn't spot you and %2} {bold green};
+#HIGHLIGHT {You try to filch %1 from %2 but {she|he|it} notices you and manages to %3} {bold red};
+#ACTION {A stream of expletives drifts down from above with %1} { #showme {\a}; };
+#ACTION {There is the faintest of sounds, as of a gnat yawning, then a WHOOSH sound. %2} { #showme {\a}; };
+#HIGHLIGHT {A stream of expletives drifts down from above with %1} {bold red underscore};
+#HIGHLIGHT {There is the faintest of sounds, as of a gnat yawning, then a WHOOSH sound. %2} {bold red underscore};
+
+
+#NOP ==[Shelox]==
+#HIGHLIGHT {^Screaming echoes throughout the lair!$} {bold red};
+#HIGHLIGHT {^You see a thick string of web hurtling at you and then everything suddenly goes black.$} {bold green};
+#HIGHLIGHT {^Webbing shoots out from the frog that looks an awful lot like Queen Shelox's abdomen and slams into %1.$} {bold green};
+#HIGHLIGHT {^Webbing shoots out from Queen Shelox's abdomen and slams into %1.$} {bold green};
+#ACTION {^An ominous gurgling noise can be heard coming from the frog that looks an awful lot like Queen Shelox's abdomen.$} { #showme {\a}; };
+#ACTION {^An ominous gurgling noise can be heard coming from Queen Shelox's abdomen.$} { #showme {\a}; };
+#HIGHLIGHT {^%1 giant spiders climb up from below!} {bold violet};
+#HIGHLIGHT {^%1 spiders scuttle up from below and join the fight!} {bold violet};
+
+
+#NOP ==[End Session On Quit]==
+#ACTION {Thanks for playing.  See you next time.} {
+    #end;
+}
+
+#CLASS {actions} {close};

@@ -1,0 +1,64 @@
+#CLASS {channels} {kill};
+#CLASS {channels} {open};
+
+#VARIABLE {talker_log_toggle} {0};
+
+#FUNCTION {log_line_to_chat} {
+    #script {ts} {date +"%I:%M%P"};
+    #line {log} {$chat_file} {$ts[1] \};
+    #line {log} {$chat_file}
+};
+
+#ACTION {^You {tell|ask|exclaim to} %1:%2} {#return @log_line_to_chat{};};
+#ACTION {^%1 {tells|asks|exclaims to} %*you{|(?: in \w+)?}: %4} {#return @log_line_to_chat{};};
+#ACTION {^[%1] %2{:|} %3} {#return @log_line_to_chat{};};
+
+#ACTION {^(They Might Be Alts) } {#return @log_line_to_chat{};};
+
+#ACTION {^(newbiehelpers)} {#return @log_line_to_chat{};};
+#ACTION {^You newbiehelper-tell:%1} {#return @log_line_to_chat{};};
+#ACTION {^(newbie)} {#return @log_line_to_chat{};};
+#ACTION {^You newbie-tell:%1} {#return @log_line_to_chat{};};
+#ACTION {^You special-tell:%1} {#return @log_line_to_chat{};};
+#ACTION {^You cre-tell:%1} {#return @log_line_to_chat{};};
+
+
+#ACTION {^(Playerkillers) %1 wisps{:|} %2} {
+    #if {"$talker_log_toggle" == "1"} {
+        #return @log_line_to_chat{};
+    };
+};
+#ACTION {(>CTF<) %1} {
+    #return @log_line_to_chat{};
+};
+#ACTION {%1Inform: %2} {
+    #return @log_line_to_chat{};
+};
+#ACTION {^(Thieves) %1 wisps{:|} %2} {
+    #if {"$talker_log_toggle" == "1"} {
+        #return @log_line_to_chat{};
+    };
+};
+#ACTION {^(Wizards) %1 wisps{:|} %2} {
+    #if {"$talker_log_toggle" == "1"} {
+        #return @log_line_to_chat{};
+    };
+};
+#ACTION {^(Igame) %1 wisps{:|} %2} {
+    #if {"$talker_log_toggle" == "1"} {
+        #return @log_line_to_chat{};
+    };
+};
+
+#ALIAS {talker log %1} {
+    #if {"%1" == "on"} {
+        #echo {<149>[Talker] Now logging talker chat to monitor.<099>};
+        #var {talker_log_toggle} {1};
+    };
+    #if {"%1" == "off"} {
+        #echo {<149>[Talker] No longer logging talker chat to monitor.<099>};
+        #var {talker_log_toggle} {0};
+    };
+};
+
+#CLASS {channels} {close};

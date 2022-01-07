@@ -1,0 +1,100 @@
+#CLASS gmcp kill
+#CLASS gmcp open
+
+
+#FORMAT IAC  %a 255
+#FORMAT DONT %a 254
+#FORMAT DO   %a 253
+#FORMAT WONT %a 252
+#FORMAT WILL %a 251
+#FORMAT SB   %a 250
+#FORMAT SE   %a 240
+
+#FORMAT GMCP %a 201
+
+#ALIAS {debug {on|off}}
+{
+    #IF {"%1" == "on"} { #VARIABLE {debug} {1}; };
+    #ELSE { #VARIABLE {debug} {0} };
+    #SHOWME { Debug is <139>$debug<099> };
+    #NOP;
+}
+
+#EVENT {IAC SB GMCP char.vitals IAC SE}
+{
+    #IF {"$debug" == "1"} { #SHOWME %1 };
+    #VAR GMCP[oldvitals] {$GMCP[vitals]};
+    #VAR GMCP[vitals] {%0};
+
+    #math {hploss} {$GMCP[vitals][hp] - $GMCP[oldvitals][hp]};
+    #if {$hploss < -150} {
+        #format {hp_loss_display} {<139>HP IS FALLING! CAREFUL! (Lost %s HP)<099>} {$hploss};
+        #echo {$hp_loss_display};
+        #showme {\a\a};
+    }
+
+    #math {xpgain} {$GMCP[vitals][xp] - $GMCP[oldvitals][xp]};
+    #if {$xpgain > 5000} {
+        #format {xp_gain_display} {(+<169>%g<099>xp)} {$xpgain};
+    
+        #echo {$xp_gain_display};
+    }
+    
+    update_prompt;
+}
+
+#EVENT {IAC SB GMCP char.info IAC SE}
+{
+    #IF {"$debug" == "1"} { #SHOWME %1 };
+    #VAR GMCP[charinfo] {%0};
+
+    #nop New login, invalidate stale info;
+    #unvar {quota};
+}
+
+#EVENT {IAC SB GMCP room.info IAC SE}
+{
+    #IF {"$debug" == "1"} { #SHOWME %1 };
+    #VAR GMCP[room][info] {%0};
+
+    /spottimercheckroomid $GMCP[room][info][identifier]
+}
+
+#EVENT {IAC SB GMCP room.map IAC SE}
+{
+    #IF {"$debug" == "1"} { #SHOWME %1 };
+    #VAR {minimap} {%0};
+    #REPLACE {minimap} {u001b} {};
+    #SYSTEM {rm logs/minimap.log && touch logs/minimap.log};
+
+    #LINE {log} {logs/minimap.log} {$minimap};
+    #SYSTEM {sed -i -e 's/^/     /' logs/minimap.log};
+}
+
+#EVENT {IAC SB GMCP room.writtenmap IAC SE}
+{
+    #IF {"$debug" == "1"} { #SHOWME %1 };
+    #VAR GMCP[room][mdt] {%0};
+    #REPLACE {GMCP[room][mdt]} {\\n} {};
+    #SYSTEM {rm logs/mapdoortext.log && touch logs/mapdoortext.log};
+    #LINE {log} {logs/mapdoortext.log} {$GMCP[room][mdt]};
+}
+
+#EVENT {IAC WILL GMCP}
+{
+    #SEND {$IAC$DO$GMCP\};
+    #nop #SEND {$IAC$SB$GMCP Core.Hello { "client": "$CLIENT_NAME", "version": "$CLIENT_VERSION" } $IAC$SE\};
+    #nop #SEND {$IAC$SB$GMCP Core.Hello { "client": "TinTin++", "version": "2.01.2" } $IAC$SE\};
+    #nop #SEND {$IAC$SB$GMCP Core.Supports.Set ["Char.Vitals", "char.info", "char.login", "room.info", "room.map", "room.writtenmap"] $IAC$SE\}
+    #SEND {$IAC$SB$GMCP core.hello { "client" : "TinTin++", "version" : "2.01.2" } $IAC$SE\};
+    #SEND {$IAC$SB$GMCP core.supports.set [ "char.login", "char.info", "char.vitals", "room.info", "room.map", "room.writtenmap" ] $IAC$SE\};
+    #nop;
+}
+
+#EVENT {PROGRAM START}
+{
+    #VARIABLE CLIENT_NAME %0;
+    #VARIABLE CLIENT_VERSION %1;
+}
+
+#CLASS gmcp close
