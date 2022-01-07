@@ -1,5 +1,7 @@
 #VARIABLE watchOutput {false};
+#VARIABLE lastLine {};
 #VARIABLE buffer {};
+#list buffer {clear};
 
 #nop Set this to be what the input command that fires 'map door text';
 #ALIAS {mt}
@@ -12,16 +14,20 @@
 {
     #if {"$watchOutput" == "true"}
     {
-        #nop If the line does not contain "from here." then add the line to the buffer;
-        #VARIABLE buffer {$buffer %1};
+        #list {buffer} {add} {%1};
+
+        #SYSTEM {rm logs/buffer.log && touch logs/buffer.log};
         #LINE {log} {logs/buffer.log} {$buffer};
         
-        #regexp {$buffer} {%*from here.$}
+        #regexp {%1} {%*from here.$}
         {
             #nop On a successful match: stop watching the output and reset the buffer;
             #SYSTEM {rm logs/mapdoortext.log && touch logs/mapdoortext.log};
-            #LINE {log} {logs/mapdoortext.log} {$buffer};
-            #VARIABLE buffer {};
+
+            #list {buffer} {get} {-1} {lastLine};
+
+            #LINE {log} {logs/mapdoortext.log} {$lastLine};
+            #list {buffer} {clear};
             #VARIABLE watchOutput {false};
         };
     }

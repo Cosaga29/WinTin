@@ -316,8 +316,7 @@ class MapDoorText:
                 self.return_value.append(output)
 
 
-def cleanLine(mdt_line: str):
-
+def cleanLine(mdt_line: str) -> str:
     # Find the last sentence in the mdt_line
     line_start = mdt_line.rfind(".", 0, len(mdt_line) - 2)
 

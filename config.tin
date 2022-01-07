@@ -8,6 +8,7 @@
 #CONFIG {LOG} {RAW};
 #CONFIG {BUFFER SIZE} {2000000};
 #config {COMMAND COLOR} {<fcf>}; 
+#config {REPEAT ENTER} {ON};
 
 #SPLIT {2} {1};
 
