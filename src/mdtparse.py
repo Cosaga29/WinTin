@@ -331,6 +331,8 @@ if __name__ == '__main__':
     else:
         mdt_line = argument
 
+    mdt_line = mdt_line.lstrip()
+
     mdt = MapDoorText()
     mdt.parse_mdt(mdt_line)
 
