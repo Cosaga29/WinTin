@@ -316,6 +316,13 @@ class MapDoorText:
                 self.return_value.append(output)
 
 
+def cleanLine(mdt_line: str):
+
+    # Find the last sentence in the mdt_line
+    line_start = mdt_line.rfind(".", 0, len(mdt_line) - 2)
+
+    return mdt_line[line_start+1:].lstrip()
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('[error] No input provided.')
@@ -331,10 +338,8 @@ if __name__ == '__main__':
     else:
         mdt_line = argument
 
-    mdt_line = mdt_line.lstrip()
-
     mdt = MapDoorText()
-    mdt.parse_mdt(mdt_line)
+    mdt.parse_mdt(cleanLine(mdt_line))
 
     for line in mdt.return_value:
         print(line)
