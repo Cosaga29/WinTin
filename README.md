@@ -1,6 +1,7 @@
 # DiscworldMUD-TinTin
 
 Created by [Ruhsbaar](http://discworld.starturtle.net/lpc/secure/finger.c?player=ruhsbaar) of the Venerable Council of Seers.
+Fork of: https://git.atr0phy.net/binaryatrocity/discworld-tintin/src/branch/master/
 
 ## Overview
 A collection of configurations and scripts for use with [DiscworldMUD](http://discworld.starturtle.net) in the [TinTin++](https://tintin.sourceforge.io) MUD client. Many features are meant to be run in their own "miniwindow" for which I make liberal use of Tmux panes. 
