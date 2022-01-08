@@ -321,13 +321,21 @@ def cleanLine(mdt_line: str) -> str:
         # Assume that we're parsing a TinTin list
         lines = re.split('{|}', mdt_line)
         mdt_text = ""
+        start_room_idx = 0
 
-        for i in range(len(lines)):
+        # Reduce problem set
+        for i in reversed(range(len(lines))):
+            if '[' and ']' in lines[i]:
+                start_room_idx = i
+
+        # Pattern match things standing around in other rooms
+        for i in range(start_room_idx, len(lines)):
+            if 'is standing' in lines[i]:
+                continue
+
             line = lines[i].replace('are', 'is')
-            if len(line) > 0 and line[0].isalpha() and re.match(r".*is.*|.* from here.", line):
+            if len(line) > 0 and line[0].isalpha() and re.match(r".*is (one|two|three|four|five).*|.* from here.", line):
                 mdt_text += line + " "
-
-        print(mdt_text)
 
         if len(mdt_text) > 0:
             return mdt_text
