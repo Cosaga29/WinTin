@@ -32,6 +32,8 @@
         ["tsimo handler",                                           "orange", 2, false],
         ["tsimo wrestler",                                          "orange", 3, false],
         ["thug",                                                    "orange", 2, false],
+        ["ronin",                                                    "orange", 5, false],
+        ["captain",                                                    "orange", 5, false],
 
         ["Djelibeybi Highlights"],
         ["^(.+?) pries(t|ts|tess|tesses)$",  "",       0, true],
@@ -49,7 +51,7 @@
         ["lad(y|ies)",    "",         2,  true],
         ["lascarim",      "orange",   3,  false],
         ["sailor",        "orange",   2,  false],
-        ["athelete",      "orange",   3,  false],
+        ["athlete",      "orange",   3,  false],
 
         ["Sto Plains Highlights"],
         ["knight",            "orange",  4,  false],

@@ -13,7 +13,7 @@
     cast Pragi's Fiery Gaze;
 };
 
-#alias {cfm} 
+#alias {cfm %1} 
 {
     get mirror from pack;
     cast Floron's Fabulous Mirror on %1;
@@ -43,12 +43,12 @@
     put eyes in pack;
 };
 
-#alias {gfpthn}
+#alias {gfpthn %1}
 {
     get %1, heavy-duty needle from pack;
 };
 
-#alias {gfptn}
+#alias {gfptn %1}
 {
     get %1, silver needle from pack
 };
@@ -74,12 +74,12 @@
     put spools,needles in pack;
 };
 
-#alias {port}
+#alias {port %1}
 {
     cast jpct on %1;
 };
 
-#alias {portp}
+#alias {portp %1}
 {
     get %1 from belt;
     cast jpct on %1;
@@ -91,7 +91,7 @@
     recover eyes from corpses;
 };
 
-#alias {scr}
+#alias {scr %1}
 {
     draw quill;
     scribe %1 on paper with quill;
@@ -103,7 +103,7 @@
     put daggers in pack;
 };
 
-#alias {sewi}
+#alias {sewi %1}
 {
     sew %1 with needle;
 };
@@ -149,12 +149,12 @@
     thread needle with thread;
 };
 
-#alias {tpa}
+#alias {tpa %1}
 {
     cast Transcendent Pneumatic Alleviator on %1;
 };
 
-#alias {wamb}
+#alias {wamb %1}
 {
     get %1 from belt;
     cast Worstler's Advanced Metallurgical Glance on %1;
@@ -162,9 +162,9 @@
     put %1 in belt;
 };
 
-#alias {wamg}
+#alias {wamg %1}
 {
-    cast Worstler's Advanced Metallurgical Glance on %1
+    cast Worstler's Advanced Metallurgical Glance on %1;
     gaze into %1
 };
 

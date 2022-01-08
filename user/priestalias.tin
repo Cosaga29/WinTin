@@ -1,9 +1,9 @@
-#alias {ac}
+#alias {ac %1}
 {
     attach %1 to bracelets;
 };
 
-#alias {aeg}
+#alias {aeg %1}
 {
     perform holy aegis on %1;
 };
@@ -13,7 +13,7 @@
     decompose corpses;
 };
 
-#alias {ddc}
+#alias {ddc %1}
 {
     decompose %1 corpses;
 };
@@ -23,7 +23,7 @@
     drop fluffs;
 };
 
-#alias {dh}
+#alias {dh %1}
 {
     remove %1 from bracelets;
     perform divine hand on %1;
@@ -31,7 +31,7 @@
     attach %1 to bracelets;
 };
 
-#alias {dhf}
+#alias {dhf %1}
 {
     get %1 from component pouch;
     perform divine hand on %1;
@@ -39,7 +39,7 @@
     put %1 in component pouch;
 };
 
-#alias {fs}
+#alias {fs %1}
 {
     perform far sight on %1;
 };
@@ -50,12 +50,12 @@
     hold beads;
 };
 
-#alias {heal}
+#alias {heal %1}
 {
     perform cure light wounds on %1;
 };
 
-#alias {healm}
+#alias {healm %1}
 {
     perform cure medium wounds on %1;
 };
@@ -75,7 +75,7 @@
     perform light on me;
 };
 
-#alias {maj}
+#alias {maj %1}
 {
     perform major shield on %1;
 };
@@ -98,12 +98,12 @@
     perform security blanket;
 };
 
-#alias {rc}
+#alias {rc %1}
 {
     remove %1 from bracelets;
 };
 
-#alias {rp}
+#alias {rp %1}
 {
     perform remember place on %1;
 };

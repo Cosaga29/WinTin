@@ -15,7 +15,7 @@
     stab opponent with weapon 2;
 };
 
-#alias {a}
+#alias {a %1}
 {
     attack %1;
 };
@@ -45,7 +45,7 @@
     feint at opponent with weapon;
 };
 
-#alias {feio}
+#alias {feio %1}
 {
    feint at %1 with weapon;
 };
@@ -60,7 +60,7 @@
     options combat tactics focus = none;
 };
 
-#alias {gfp}
+#alias {gfp %1}
 {
     get %1 from pack;
 };
@@ -85,7 +85,7 @@
     peek opponent;
 };
 
-#alias {pip}
+#alias {pip %1}
 {
     put %1 in pack;
 };
