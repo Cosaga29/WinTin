@@ -1,4 +1,11 @@
 #alias {-quit}
 {
-    #SYSTEM {tmux kill-session}
+    #SEND {quit};
+    #SYSTEM {tmux kill-session};
+};
+
+#alias {-su}
+{
+    #SEND {quit};
+    #SYSTEM {./run.sh};
 };

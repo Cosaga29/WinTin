@@ -44,6 +44,4 @@
 #FORMAT {log_file} {logs/active/%t.log} {%Y-%m-%d};
 #LOG {APPEND} {$log_file};
 
-#ACTION {Greco the Departure Gecko waves.} {#end}
-
 #FORMAT {start_time} {%T};
