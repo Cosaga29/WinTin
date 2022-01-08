@@ -34,7 +34,7 @@
     }
 
     #math {xpgain} {$GMCP[vitals][xp] - $GMCP[oldvitals][xp]};
-    #if {$xpgain > 5000} {
+    #if {$xpgain > 1000} {
         #format {xp_gain_display} {(+<169>%g<099>xp)} {$xpgain};
     
         #echo {$xp_gain_display};

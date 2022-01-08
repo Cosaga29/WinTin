@@ -1,4 +1,4 @@
-cd ~/dev/mud/Discworld
+cd ~/mud/discworld
 
 # No existing discworld session? Then create one
 if [[ ! $(tmux ls -F '#S') =~ discworld ]]; then
@@ -24,31 +24,24 @@ if [ -n "$TMUX" ] || [ "$DISC_SESSION_CREATE" = "1" ]; then
 
     # Create the chat monitor window on top
 
-    # Did we ask for the full layout?
-    if [[ $1 == "full" ]]; then
-        # Horizontal split and load spottimers
-        tmux select-pane -t discworld:0.0
-        tmux split-window -h -l 10
-        tmux send-keys './bin/dt' 'C-m'
+    # Horizontal split and load spottimers
+    tmux select-pane -t discworld:0.0
+    tmux split-window -h -l 10
+    tmux send-keys './bin/dt' 'C-m'
 
-        # Splice a section for chat
-        tmux split-window -v -p 50
-        tmux send-keys 'clear && tail -fs .5 logs/chat.log' 'C-m'
+    # Splice a section for chat
+    tmux split-window -v -p 50
+    tmux send-keys 'clear && tail -fs .5 logs/chat.log' 'C-m'
 
-        # Place the ASCII map at the bottom
-        tmux split-window -v -p 50
-        tmux send-keys './bin/map' 'C-m'
-    fi
+    # Place the ASCII map at the bottom
+    tmux split-window -v -p 50
+    tmux send-keys './bin/map' 'C-m'
 
     # Cut back to main window, vertical split for mapdoortext
     tmux select-pane -t 0
     tmux split-window -v -b -l 5
     tmux send-keys './bin/mdt' 'C-m'
     tmux select-pane -t 1
-
-    tmux send-keys 'tmux resize-pane -U 20' Enter
-    tmux send-keys 'tmux resize-pane -R 30' Enter
-    tmux send-keys 'clear && tt++ -G config.tin' 'C-m'
     
     fi
     

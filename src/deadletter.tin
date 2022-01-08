@@ -831,7 +831,7 @@
 
 
 #NOP ==[Alias to attempt solve of letter in inventory]==
-#ALIAS {sl} {
+#ALIAS {sle} {
     #send {read letter};
     #var {parsing_dead_letter} {0};
     #list {letter_lines} {create};

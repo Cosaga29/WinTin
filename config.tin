@@ -34,6 +34,7 @@
 
 #READ {src/manualmapdoortext.tin};
 
+#READ {user/system.tin};
 #READ {user/generalalias.tin};
 #READ {user/wizalias.tin};
 #READ {user/priestalias.tin};

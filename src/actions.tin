@@ -1,6 +1,33 @@
 #CLASS {actions} {kill};
 #CLASS {actions} {open};
 
+#NOP ==[NPC Highlights]==
+#HIGHLIGHT {imperial guard} {bold pink};
+#HIGHLIGHT {student} {bold pink};
+#HIGHLIGHT {noblem{en|an}} {bold pink};
+#HIGHLIGHT {bodyguard} {bold pink};
+#HIGHLIGHT {ronin} {bold pink};
+#HIGHLIGHT {samurai} {bold pink};
+#HIGHLIGHT {captain} {bold pink};
+#HIGHLIGHT {thug} {bold pink};
+#HIGHLIGHT {tsimo handler} {bold pink};
+#HIGHLIGHT {tsimo wrestler} {bold pink};
+#HIGHLIGHT {old vincent} {bold pink};
+#HIGHLIGHT {boy willie} {bold pink};
+#HIGHLIGHT {truckle the uncivil} {bold pink};
+#HIGHLIGHT {mad hamish} {bold pink};
+#HIGHLIGHT {ceremonial guard} {bold pink};
+#HIGHLIGHT {ceremonial sentr{y|ies}} {bold pink};
+#HIGHLIGHT {soldier} {bold pink};
+#HIGHLIGHT {palace guard} {bold pink};
+#HIGHLIGHT {hoplite} {bold pink};
+#HIGHLIGHT {philosopher} {bold pink};
+#HIGHLIGHT {lascarim} {bold pink};
+#HIGHLIGHT {sailor} {green};
+#HIGHLIGHT {{hefty|burly|wiry} m{e|a}n} {bold pink};
+#HIGHLIGHT {athlete} {bold pink};
+#HIGHLIGHT {palace guard} {bold pink};
+
 #NOP ==[TPA Alerts]==
 #HIGHLIGHT {^There is a sudden white flash.  Your magical shield has broken.$} {bold red underscore};
 #HIGHLIGHT {^There is a sudden white flash around {(?!a passing wizard).+}.$} {bold red underscore};

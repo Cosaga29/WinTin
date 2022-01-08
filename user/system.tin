@@ -1,0 +1,4 @@
+#alias {-quit}
+{
+    #SYSTEM {tmux kill-session}
+};
