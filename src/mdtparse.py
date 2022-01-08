@@ -317,6 +317,21 @@ class MapDoorText:
 
 
 def cleanLine(mdt_line: str) -> str:
+    if mdt_line[0] == '{' and mdt_line[2] == '}':
+        # Assume that we're parsing a TinTin list
+        lines = re.split('{|}', mdt_line)
+        good_lines = []
+
+        for i in range(len(lines)):
+            if len(lines[i]) > 0 and lines[i][0].isalpha() and re.match(r".* from here.", lines[i]):
+                good_lines.append(lines[i])
+
+        if len(good_lines) > 0:
+            return good_lines[0]
+        else:
+            return ""
+
+
     # Find the last sentence in the mdt_line
     line_start = mdt_line.rfind(".", 0, len(mdt_line) - 2)
 

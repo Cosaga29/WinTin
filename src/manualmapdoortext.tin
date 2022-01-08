@@ -16,7 +16,6 @@
     {
         #list {buffer} {add} {%1};
 
-        #SYSTEM {rm logs/buffer.log && touch logs/buffer.log};
         #LINE {log} {logs/buffer.log} {$buffer};
         
         #regexp {%1} {%*from here.$}
@@ -24,9 +23,7 @@
             #nop On a successful match: stop watching the output and reset the buffer;
             #SYSTEM {rm logs/mapdoortext.log && touch logs/mapdoortext.log};
 
-            #list {buffer} {get} {-1} {lastLine};
-
-            #LINE {log} {logs/mapdoortext.log} {$lastLine};
+            #LINE {log} {logs/mapdoortext.log} {$buffer};
             #list {buffer} {clear};
             #VARIABLE watchOutput {false};
         };
