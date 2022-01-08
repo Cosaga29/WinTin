@@ -4,39 +4,15 @@
 #VARIABLE {xptimer_file} {logs/xptimers.log};
 
 #VARIABLE {killtimers} {
-    {Delbert}{
-        {time}{0}
-        {name}{delbert}
-        {group}{false}
-        {respawn}{30}
-    }
     {the Triad boss}{
         {time}{0}
         {name}{medina boss}
         {group}{false}
         {respawn}{30}
     }
-    {the bandit leader}{
-        {time}{0}
-        {name}{bandit leader}
-        {group}{false}
-        {respawn}{30}
-    }
     {Hlakket the Bartender}{
         {time}{0}
         {name}{hlakket}
-        {group}{false}
-        {respawn}{30}
-    }
-    {the Zoon Liar}{
-        {time}{0}
-        {name}{zoon liar}
-        {group}{false}
-        {respawn}{30}
-    }
-    {Slim Stevie}{
-        {time}{0}
-        {name}{rogues}
         {group}{false}
         {respawn}{30}
     }
@@ -92,54 +68,6 @@
         {time}{0}
         {name}{shaker lions}
         {group}{false}
-        {respawn}{30}
-    }
-    {Louis Accardo}{
-        {time}{0}
-        {name}{stables}
-        {group}{true}
-        {respawn}{30}
-    }
-    {Samuel Casso}{
-        {time}{0}
-        {name}{stables}
-        {group}{true}
-        {respawn}{30}
-    }
-    {Enrico Persuica}{
-        {time}{0}
-        {name}{stables}
-        {group}{true}
-        {respawn}{30}
-    }
-    {Joe Corrola}{
-        {time}{0}
-        {name}{stables}
-        {group}{true}
-        {respawn}{30}
-    }
-    {Marlon Gumboni}{
-        {time}{0}
-        {name}{casino}
-        {group}{true}
-        {respawn}{30}
-    }
-    {Frankie Harvard}{
-        {time}{0}
-        {name}{casino}
-        {group}{true}
-        {respawn}{30}
-    }
-    {Geraldo Ciaco}{
-        {time}{0}
-        {name}{casino}
-        {group}{true}
-        {respawn}{30}
-    }
-    {Charles Marchella}{
-        {time}{0}
-        {name}{casino}
-        {group}{true}
         {respawn}{30}
     }
 }
