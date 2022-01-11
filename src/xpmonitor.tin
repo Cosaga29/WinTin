@@ -1,10 +1,6 @@
 #CLASS {xpmonitor} {kill};
 #CLASS {xpmonitor} {open};
 
-#VARIABLE hp {};
-#VARIABLE burden {};
-#VARIABLE gp {};
-
 #ALIAS {xp_monitor} {
     #var {previous_xp} {$latest_xp};
     #var {latest_xp} {$GMCP[vitals][xp]};

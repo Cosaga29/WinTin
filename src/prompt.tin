@@ -124,8 +124,8 @@
     #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
     #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
     #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
-    #format {xp} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
-    #format {sep} {%c|%c};
+    #format {xp} {%cXP: %G%c} {$xpcolor} {$GMCP[vitals][xp]};
+    #format {sep} {%c|%c} {$sepcolor};
     #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp};
 
     #format {prompt_line} {%+5s %+40s %+15s %+10s} {$prompt_tpa} {$prompt_xp} {$prompt_quota} {$vitals};
