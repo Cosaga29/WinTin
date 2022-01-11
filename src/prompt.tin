@@ -45,7 +45,7 @@
 #function {dectohex}
 {
     #list {digits} {cre} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {A} {B} {C} {D} {E} {F};
-    #local result {};
+    #var colresult {};
     #local num {%0};
     #local div {};
     #local rem {};
@@ -67,7 +67,7 @@
 
             #list {digits} {get} {$idx} {val};
 
-            #local {result} {$result$val};
+            #var {colresult} {$colresult$val};
 
             #math {num}
             {
@@ -89,7 +89,7 @@
 
             #list {digits} {get} {$idx} {val};
 
-            #local {result} {$result$val};
+            #var {colresult} {$colresult$val};
             
             #math {num}
             {
@@ -98,7 +98,46 @@
         };
     };
 
-    #return $result;
+    #return $colresult;
+}
+
+#function {xpblue}
+{
+    #local blue {};
+    #if {%0 > 20000000}
+    {
+        #return FF;
+    };
+
+    #math {blue}
+    {
+        (1.0 * %0) / ($maxxp * 1.0) * 256.0
+    };
+    #format {blue} {%d} {$blue};
+
+    #return @dectohex{$blue};
+}
+
+#function {xpgreen}
+{
+    #return 00;
+}
+
+#function {xpred}
+{
+    #local red {};
+    #if {%0 > 20000000}
+    {
+        #return 00;
+    };
+
+    #math {red}
+    {
+        (1.0 - ((1.0 * %0) / ($maxxp * 1.0))) * 256.0
+    };
+    #format {red} {%d} {$red};
+
+    #return @dectohex{$red};
 }
 
 #ALIAS {update_prompt} {
@@ -118,14 +157,15 @@
         #format {prompt_quota} {Quota: %s} {@quota_time_left{}};
     };
 
-    #nop Hp, gp, burden display;
-
     #var vitals {};
+    #nop #format {vitals} {HP: %d | %cGP: %d%c | B%: %d | XP: %G} {$GMCP[vitals][hp]} {$GMCP[vitals][gp]} {$GMCP[vitals][burden]} {$GMCP[vitals][xp]};
+
+    #nop Hp, hp, burden;
     #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
     #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
     #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
-    #format {xp} {%cXP: %G%c} {$xpcolor} {$GMCP[vitals][xp]};
-    #format {sep} {%c|%c} {$sepcolor};
+    #format {xp} {%cXP: %G%c} {<F@xpred{$GMCP[vitals][xp]}00@xpblue{$GMCP[vitals][xp]}>} {$GMCP[vitals][xp]};
+    #format {sep} {%c|%c} {<FFFFFFF>};
     #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp};
 
     #format {prompt_line} {%+5s %+40s %+15s %+10s} {$prompt_tpa} {$prompt_xp} {$prompt_quota} {$vitals};

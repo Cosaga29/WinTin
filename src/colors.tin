@@ -7,5 +7,5 @@
 #VARIABLE hpminor {1500};
 #VARIABLE hpmajor {1000};
 
-#VARIABLE sepcolor {<FFFFFFF>};
-#VARIABLE xpcolor {<FFFFFFF>};
+#VARIABLE maxxp {20000000};
+#VARIABLE minxp {0};
