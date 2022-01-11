@@ -2,7 +2,7 @@
 #CLASS {actions} {open};
 
 #NOP ==[NPC Highlights]==
-#HIGHLIGHT {imperial guard} {bold pink};
+#HIGHLIGHT {Imperial guard} {bold pink};
 #HIGHLIGHT {student} {bold pink};
 #HIGHLIGHT {noblem{en|an}} {bold pink};
 #HIGHLIGHT {bodyguard} {bold pink};

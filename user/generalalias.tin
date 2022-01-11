@@ -72,7 +72,7 @@
 
 #alias {ka}
 {
-    kill all except players&shopkeepers&cats&hags&bats&wizards&priests&priestesses&clouds&summons&pets&camels&monkeys&palms&trees&luggages&dragons&kang wu&shopkeepers&stallowners&cobblers&ryattenoki&fireflies&lights&tneduts&phos-phor&lap-lip&lip-phon&mihk&ptyler&ptarquet&pkara&hattian guards&goldenblossom&moths&fireflies&johnny&pennie&jeef&cuthbert&tfat&bessie&kang&Kyakenko&camel traders&bodyguards&wun gold star&shi do gai&ug&ipsor&goldenleaf&goldenblossom&chickens&nyne gold dragon&skeletons&swarms&fruitbats&fences&citadel guards&klepton&cadalessa;
+    kill all except players&shopkeepers&cats&hags&bats&wizards&priests&priestesses&clouds&summons&pets&camels&monkeys&palms&trees&luggages&dragons&kang wu&shopkeepers&stallowners&cobblers&ryattenoki&fireflies&lights&tneduts&phos-phor&lap-lip&lip-phon&mihk&ptyler&ptarquet&pkara&hattian guards&goldenblossom&moths&fireflies&johnny&pennie&jeef&cuthbert&tfat&bessie&kang&Kyakenko&camel traders&bodyguards&wun gold star&shi do gai&ug&ipsor&goldenleaf&goldenblossom&chickens&nyne gold dragon&skeletons&swarms&fruitbats&fences&citadel guards&klepton&cadalessa&Himaclitus;
 };
 
 #alias {kal}

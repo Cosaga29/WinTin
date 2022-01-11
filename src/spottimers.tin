@@ -50,19 +50,19 @@
         {time}{0}
         {name}{snail}
         {group}{true}
-        {respawn}{30}
+        {respawn}{60}
     }
     {the %* nitsuni}{
         {time}{0}
         {name}{snail}
         {group}{true}
-        {respawn}{30}
+        {respawn}{60}
     }
     {the Ome outlaw}{
         {time}{0}
         {name}{snail}
         {group}{true}
-        {respawn}{30}
+        {respawn}{60}
     }
     {the %* lion}{
         {time}{0}

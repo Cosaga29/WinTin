@@ -12,6 +12,8 @@
 
 #SPLIT {2} {1};
 
+#READ {src/colors.tin};
+
 #READ {src/channels.tin};
 #READ {src/actions.tin};
 #READ {src/aliases.tin};

@@ -1,0 +1,8 @@
+#VARIABLE burdenminor {15};
+#VARIABLE burdenmajor {20};
+
+#VARIABLE gpminor {135};
+#VARIABLE gpmajor {80};
+
+#VARIABLE hpminor {1500};
+#VARIABLE hpmajor {1000};

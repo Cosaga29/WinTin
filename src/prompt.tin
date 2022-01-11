@@ -2,19 +2,104 @@
 #nop colors
 #function {tpa_col}
 {
-        #if {"%0" == "invisible"}
-       	        #return <178>;
-        #if {"%0" == "dull red"}
-       	        #return <018>;
-        #if {"%0" == "bright red"}
-       	        #return <118>;
-        #if {"%0" == "wobbling orange"}
-       	        #return <fca><188>;
-        #if {"%0" == "flickering yellow"}
-       	        #return <138>;
+    #if {"%0" == "invisible"}
+            #return <178>;
+    #if {"%0" == "dull red"}
+            #return <018>;
+    #if {"%0" == "bright red"}
+            #return <118>;
+    #if {"%0" == "wobbling orange"}
+            #return <fca><188>;
+    #if {"%0" == "flickering yellow"}
+            #return <138>;
 	#return;
 }
 
+#function {hp_col}
+{
+    #if {%0 < $hpmajor}
+        #return <118>;
+    #if {%0 < $hpminor}
+        #return <138>;
+	#return <128>;
+}
+
+#function {gp_col}
+{
+    #if {%0 < $gpmajor}
+        #return <118>;
+    #if {%0 < $gpminor}
+        #return <138>;
+	#return <128>;
+}
+
+#function {burden_col}
+{
+    #if {%0 > $burdenmajor}
+        #return <118>;
+    #if {%0 > $burdenminor}
+        #return <138>;
+	#return <128>;
+}
+
+#function {dectohex}
+{
+    #list {digits} {cre} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {A} {B} {C} {D} {E} {F};
+    #local result {};
+    #local num {%0};
+    #local div {};
+    #local rem {};
+
+    #while {$num > 0} 
+    {
+        #math {div} 
+        {
+            $num / 16
+        };
+
+        #if {$div > 0}
+        {
+
+            #local val {};
+            #local idx {};
+
+            #math {idx} {$div+1};
+
+            #list {digits} {get} {$idx} {val};
+
+            #local {result} {$result$val};
+
+            #math {num}
+            {
+                $num - (16 * $div)
+            };
+        };
+
+        #math {rem} 
+        {
+            $num % 16
+        };
+
+        #if {$rem > 0}
+        {
+            #local val {};
+            #local idx {};
+
+            #math {idx} {$div+1};
+
+            #list {digits} {get} {$idx} {val};
+
+            #local {result} {$result$val};
+            
+            #math {num}
+            {
+                $num - $rem
+            };
+        };
+    };
+
+    #return $result;
+}
 
 #ALIAS {update_prompt} {
     #nop XP monitor details;
@@ -33,6 +118,16 @@
         #format {prompt_quota} {Quota: %s} {@quota_time_left{}};
     };
 
-    #format {prompt_line} {%+5s %+40s %+15s} {$prompt_tpa} {$prompt_xp} {$prompt_quota};
+    #nop Hp, gp, burden display;
+
+    #var vitals {};
+    #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
+    #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
+    #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
+    #format {xp} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
+    #format {sep} {%c|%c};
+    #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp};
+
+    #format {prompt_line} {%+5s %+40s %+15s %+10s} {$prompt_tpa} {$prompt_xp} {$prompt_quota} {$vitals};
     #showme {$prompt_line} {-1};
 }

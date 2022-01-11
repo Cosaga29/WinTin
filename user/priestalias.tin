@@ -113,3 +113,8 @@
     perform summon fluff;
     perform totem on fluff;
 };
+
+#alias {stasis %1}
+{
+    perform stasis on %1;
+};
