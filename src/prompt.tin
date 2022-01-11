@@ -1,144 +1,15 @@
 #NOP == Prompt Update Function ==
-#nop colors
-#function {tpa_col}
-{
-    #if {"%0" == "invisible"}
-            #return <178>;
-    #if {"%0" == "dull red"}
-            #return <018>;
-    #if {"%0" == "bright red"}
-            #return <118>;
-    #if {"%0" == "wobbling orange"}
-            #return <fca><188>;
-    #if {"%0" == "flickering yellow"}
-            #return <138>;
-	#return;
-}
 
-#function {hp_col}
-{
-    #if {%0 < $hpmajor}
-        #return <118>;
-    #if {%0 < $hpminor}
-        #return <138>;
-	#return <128>;
-}
+#nop Set to true to enable vital monitor;
+#VARIABLE enable_vitals {true};
 
-#function {gp_col}
-{
-    #if {%0 < $gpmajor}
-        #return <118>;
-    #if {%0 < $gpminor}
-        #return <138>;
-	#return <128>;
-}
+#nop Set to true to enable xp colors;
+#VARIABLE enable_xp_color {true};
 
-#function {burden_col}
-{
-    #if {%0 > $burdenmajor}
-        #return <118>;
-    #if {%0 > $burdenminor}
-        #return <138>;
-	#return <128>;
-}
+#VARIABLE vitals {};
+#VARIABLE sep {};
 
-#function {dectohex}
-{
-    #list {digits} {cre} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {A} {B} {C} {D} {E} {F};
-    #var colresult {};
-    #local num {%0};
-    #local div {};
-    #local rem {};
-
-    #while {$num > 0} 
-    {
-        #math {div} 
-        {
-            $num / 16
-        };
-
-        #if {$div > 0}
-        {
-
-            #local val {};
-            #local idx {};
-
-            #math {idx} {$div+1};
-
-            #list {digits} {get} {$idx} {val};
-
-            #var {colresult} {$colresult$val};
-
-            #math {num}
-            {
-                $num - (16 * $div)
-            };
-        };
-
-        #math {rem} 
-        {
-            $num % 16
-        };
-
-        #if {$rem > 0}
-        {
-            #local val {};
-            #local idx {};
-
-            #math {idx} {$div+1};
-
-            #list {digits} {get} {$idx} {val};
-
-            #var {colresult} {$colresult$val};
-            
-            #math {num}
-            {
-                $num - $rem
-            };
-        };
-    };
-
-    #return $colresult;
-}
-
-#function {xpblue}
-{
-    #local blue {};
-    #if {%0 > 20000000}
-    {
-        #return FF;
-    };
-
-    #math {blue}
-    {
-        (1.0 * %0) / ($maxxp * 1.0) * 256.0
-    };
-    #format {blue} {%d} {$blue};
-
-    #return @dectohex{$blue};
-}
-
-#function {xpgreen}
-{
-    #return 00;
-}
-
-#function {xpred}
-{
-    #local red {};
-    #if {%0 > 20000000}
-    {
-        #return 00;
-    };
-
-    #math {red}
-    {
-        (1.0 - ((1.0 * %0) / ($maxxp * 1.0))) * 256.0
-    };
-    #format {red} {%d} {$red};
-
-    #return @dectohex{$red};
-}
+#format {sep} {%c|%c} {<FFFFFFF>};
 
 #ALIAS {update_prompt} {
     #nop XP monitor details;
@@ -157,16 +28,24 @@
         #format {prompt_quota} {Quota: %s} {@quota_time_left{}};
     };
 
-    #var vitals {};
-    #nop #format {vitals} {HP: %d | %cGP: %d%c | B%: %d | XP: %G} {$GMCP[vitals][hp]} {$GMCP[vitals][gp]} {$GMCP[vitals][burden]} {$GMCP[vitals][xp]};
+    #if {$enable_vitals == "true"}
+    {
+        #nop Hp, hp, burden;
+        #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
+        #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
+        #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
 
-    #nop Hp, hp, burden;
-    #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
-    #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
-    #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
-    #format {xp} {%cXP: %G%c} {<F@xpred{$GMCP[vitals][xp]}00@xpblue{$GMCP[vitals][xp]}>} {$GMCP[vitals][xp]};
-    #format {sep} {%c|%c} {<FFFFFFF>};
-    #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp};
+        #if {$enable_xp_color == "true"} 
+        {
+            #format {xp_color} {%cXP: %G%c} {<F@xpred{$GMCP[vitals][xp]}00@xpblue{$GMCP[vitals][xp]}>} {$GMCP[vitals][xp]};
+        };
+        #else 
+        {
+            #format {xp_color} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
+        };
+
+        #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp_color};
+    };
 
     #format {prompt_line} {%+5s %+40s %+15s %+10s} {$prompt_tpa} {$prompt_xp} {$prompt_quota} {$vitals};
     #showme {$prompt_line} {-1};

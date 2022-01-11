@@ -1,3 +1,6 @@
+#nop Set to true to enable xp colors;
+#VARIABLE enable_xp_color {};
+
 #VARIABLE burdenminor {15};
 #VARIABLE burdenmajor {20};
 
@@ -9,3 +12,145 @@
 
 #VARIABLE maxxp {20000000};
 #VARIABLE minxp {0};
+
+#list {digits} {cre} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {A} {B} {C} {D} {E} {F};
+
+#nop colors
+#function {tpa_col}
+{
+    #if {"%0" == "invisible"}
+            #return <178>;
+    #if {"%0" == "dull red"}
+            #return <018>;
+    #if {"%0" == "bright red"}
+            #return <118>;
+    #if {"%0" == "wobbling orange"}
+            #return <fca><188>;
+    #if {"%0" == "flickering yellow"}
+            #return <138>;
+	#return;
+}
+
+#function {hp_col}
+{
+    #if {%0 < $hpmajor}
+        #return <118>;
+    #if {%0 < $hpminor}
+        #return <138>;
+	#return <128>;
+}
+
+#function {gp_col}
+{
+    #if {%0 < $gpmajor}
+        #return <118>;
+    #if {%0 < $gpminor}
+        #return <138>;
+	#return <128>;
+}
+
+#function {burden_col}
+{
+    #if {%0 > $burdenmajor}
+        #return <118>;
+    #if {%0 > $burdenminor}
+        #return <138>;
+	#return <128>;
+}
+
+#function {dectohex}
+{
+    #var colresult {};
+    #local num {%0};
+    #local div {};
+    #local rem {};
+
+    #while {$num > 0} 
+    {
+        #math {div} 
+        {
+            $num / 16
+        };
+
+        #if {$div > 0}
+        {
+
+            #local val {};
+            #local idx {};
+
+            #math {idx} {$div+1};
+
+            #list {digits} {get} {$idx} {val};
+
+            #var {colresult} {$colresult$val};
+
+            #math {num}
+            {
+                $num - (16 * $div)
+            };
+        };
+
+        #math {rem} 
+        {
+            $num % 16
+        };
+
+        #if {$rem > 0}
+        {
+            #local val {};
+            #local idx {};
+
+            #math {idx} {$div+1};
+
+            #list {digits} {get} {$idx} {val};
+
+            #var {colresult} {$colresult$val};
+            
+            #math {num}
+            {
+                $num - $rem
+            };
+        };
+    };
+
+    #return $colresult;
+}
+
+#function {xpblue}
+{
+    #local blue {};
+    #if {%0 > 20000000}
+    {
+        #return FF;
+    };
+
+    #math {blue}
+    {
+        (1.0 * %0) / ($maxxp * 1.0) * 256.0
+    };
+    #format {blue} {%d} {$blue};
+
+    #return @dectohex{$blue};
+}
+
+#function {xpgreen}
+{
+    #return 00;
+}
+
+#function {xpred}
+{
+    #local red {};
+    #if {%0 > 20000000}
+    {
+        #return 00;
+    };
+
+    #math {red}
+    {
+        (1.0 - ((1.0 * %0) / ($maxxp * 1.0))) * 256.0
+    };
+    #format {red} {%d} {$red};
+
+    #return @dectohex{$red};
+}
