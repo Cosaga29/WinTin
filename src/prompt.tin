@@ -4,7 +4,7 @@
 #VARIABLE enable_vitals {true};
 
 #nop Set to true to enable xp colors;
-#VARIABLE enable_xp_color {true};
+#VARIABLE enable_xp_color {};
 
 #VARIABLE vitals {};
 #VARIABLE sep {};

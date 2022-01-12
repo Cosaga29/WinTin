@@ -6,9 +6,9 @@ if [[ ! $(tmux ls -F '#S') =~ discworld ]]; then
     DISC_SESSION_CREATE=1
 
     # Zero out log files to keep size down
-    # rm logs/minimap.log && touch logs/minimap.log
-    # rm logs/mapdoortext.log && touch logs/mapdoortext.log
-    # rm logs/chat.log && touch logs/chat.log
+    rm logs/minimap.log && touch logs/minimap.log
+    rm logs/mapdoortext.log && touch logs/mapdoortext.log
+    rm logs/chat.log && touch logs/chat.log
     
     # Start a new tmux session named "discworld"
     tmux new-session -d -A -D -s discworld
