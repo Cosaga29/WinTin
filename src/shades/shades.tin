@@ -1,0 +1,97 @@
+#VARIABLE shadeWidth {5};
+#VARIABLE shadeHeight {5};
+
+#VARIABLE macromode {0};
+
+#nop Assume we're starting in the heart;
+#VARIABLE currentNode {12};
+
+#VARIABLE enableShades {false};
+
+#VARIABLE shadesIndicator {};
+
+#function {translateDir}
+{
+    #var result {};
+    #script {result} {python3 src/shades/shades.py $currentNode %0};
+
+    #var direction {};
+    #var newNode {};
+
+    #list {result} {get} {1} {direction};
+    #list {result} {get} {2} {newNode};
+
+    #if {$direction}
+    {
+        #if {$newNode}
+        {
+            #showme Moved %0;
+            #showme sending $direction;
+            #return $direction;
+            #var currentNode {$newNode};
+        }
+    };
+    #else
+    {
+        #showme Failed to move! Disable with /shades!;
+    }
+}
+
+#function {togglemacros} 
+{
+    #if {$macromode == 1}
+    {
+         #unmacro {e};
+         #unmacro {f};
+         #unmacro {s};
+         #unmacro {c};
+         #unmacro {r};
+         #unmacro {w};
+         #unmacro {x};
+         #unmacro {v};
+         #unmacro {d};
+         #var macromode {0};
+    };
+    #else
+    {
+        #macro {e} 
+        {
+            @translateDir{n};
+        };
+        #macro {f} 
+        {
+            @translateDir{e};
+        };
+        #macro {s} 
+        {
+            @translateDir{w};
+        };
+        #macro {c} 
+        {
+            @translateDir{s};
+        };
+        #macro {r} 
+        {
+            @translateDir{ne};
+        };
+        #macro {w} 
+        {
+            @translateDir{nw};
+        };
+        #macro {x} 
+        {
+            @translateDir{sw};
+        };
+        #macro {v} 
+        {
+            @translateDir{se};
+        };
+        #macro {d} 
+        {
+            #send ka;
+        };
+        #var macromode {1};
+    }
+}
+
+#macro {11} {@togglemacros{}};

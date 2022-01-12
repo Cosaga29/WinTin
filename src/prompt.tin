@@ -22,6 +22,11 @@
         #format {prompt_tpa} {%cTPA%c} {@tpa_col{$tpa_color}} {<098>};
     };
 
+    #var {prompt_macromode} {};
+    #if {$macromode == 1} {
+        #format {prompt_macromode} {%cMACRO%c} {<118>} {<098>};
+    };
+
     #nop Quota monitor details;
     #var {prompt_quota} {};
     #if {&quota} {
@@ -47,6 +52,6 @@
         #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp_color};
     };
 
-    #format {prompt_line} {%+5s %+40s %+15s %+10s} {$prompt_tpa} {$prompt_xp} {$prompt_quota} {$vitals};
+    #format {prompt_line} {%+0s %+25s %+15s %+15s %+10s} {$vitals} {$prompt_xp} {$prompt_quota} {$prompt_macromode} {$prompt_tpa};
     #showme {$prompt_line} {-1};
 }
