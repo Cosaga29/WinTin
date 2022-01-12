@@ -3,9 +3,6 @@
 #nop Set to true to enable vital monitor;
 #VARIABLE enable_vitals {true};
 
-#nop Set to true to enable xp colors;
-#VARIABLE enable_xp_color {};
-
 #VARIABLE vitals {};
 #VARIABLE sep {};
 
@@ -39,15 +36,7 @@
         #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
         #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
         #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
-
-        #if {$enable_xp_color == "true"} 
-        {
-            #format {xp_color} {%cXP: %G%c} {<F@xpred{$GMCP[vitals][xp]}00@xpblue{$GMCP[vitals][xp]}>} {$GMCP[vitals][xp]};
-        };
-        #else 
-        {
-            #format {xp_color} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
-        };
+        #format {xp_color} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
 
         #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp_color};
     };
