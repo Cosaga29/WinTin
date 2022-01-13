@@ -26,13 +26,15 @@
         #if {$newNode}
         {
             #showme Moved %0;
-            #return $direction;
+            #showme prev node $currentNode;
+            #showme current node $newNode;
             #var currentNode {$newNode};
+            #return $direction;
         }
     };
     #else
     {
-        #showme Failed to move! Toggle macro with '11'!;
+        #showme Failed to move! Toggle macro with '5'!;
     }
 }
 
@@ -55,6 +57,9 @@
     };
     #else
     {
+        #showme Assuming shade heart [Node 12];
+
+        #VARIABLE currentNode {12};
         #macro {i} 
         {
             @translateDir{n};
@@ -104,4 +109,8 @@
     }
 }
 
-#macro {11} {@togglemacros{}};
+#macro {5} 
+{
+    #showme macro called;
+    @togglemacros{};
+};
