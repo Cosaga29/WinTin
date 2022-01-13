@@ -23,10 +23,13 @@
 #HIGHLIGHT {hoplite} {bold pink};
 #HIGHLIGHT {philosopher} {bold pink};
 #HIGHLIGHT {lascarim} {bold pink};
-#HIGHLIGHT {sailor} {bold pink};
+#HIGHLIGHT {sailor} {green};
 #HIGHLIGHT {{hefty|burly|wiry} m{e|a}n} {bold pink};
 #HIGHLIGHT {athlete} {bold pink};
 #HIGHLIGHT {palace guard} {bold pink};
+#HIGHLIGHT {ninja} {bold pink};
+#HIGHLIGHT {hyena} {bold pink};
+#HIGHLIGHT {crane} {bold pink};
 
 #NOP ==[TPA Alerts]==
 #HIGHLIGHT {^There is a sudden white flash.  Your magical shield has broken.$} {bold red underscore};

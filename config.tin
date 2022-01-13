@@ -26,7 +26,7 @@
 #READ {src/xpmonitor.tin};
 #READ {src/tpamonitor.tin};
 #READ {src/spottimers.tin};
-#READ {src/quota.tin};
+#NOP READ {src/quota.tin};
 
 #READ {src/combat.tin};
 #READ {src/deadletter.tin};
@@ -38,14 +38,14 @@
 
 #READ {src/manualmapdoortext.tin};
 
-#READ {user/system.tin};
-#READ {user/generalalias.tin};
-#READ {user/wizalias.tin};
-#READ {user/priestalias.tin};
+#NOP READ {user/system.tin};
+#NOP READ {user/generalalias.tin};
+#NOP READ {user/wizalias.tin};
+#NOP READ {user/priestalias.tin};
 
 #SESSION {discworld} {discworld.starturtle.net} {4242};
 
-#FORMAT {log_file} {logs/active/%t.log} {%Y-%m-%d};
-#LOG {APPEND} {$log_file};
+#NOP FORMAT {log_file} {logs/active/%t.log} {%Y-%m-%d};
+#NOP LOG {APPEND} {$log_file};
 
 #FORMAT {start_time} {%T};

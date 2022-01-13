@@ -38,6 +38,8 @@
         ["boy willie",                                              "orange", 3, false],
         ["truckle the uncivil",                                     "orange", 3, false],
         ["mad hamish",                                              "orange", 3, false],
+        ["hyena",                                                   "orange", 3, false],
+        ["crane",                                                   "orange", 3, false],
 
         ["Djelibeybi Highlights"],
         ["^(.+?) pries(t|ts|tess|tesses)$",  "",       0, true],
