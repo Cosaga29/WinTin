@@ -86,3 +86,95 @@
     #send {nickname};
     #send {cols 999};
 };
+
+#ALIAS {a %1} {
+#SEND {attack %1};
+};
+
+#ALIAS {ba} {
+#SEND bury corpses&bits;
+};
+
+#ALIAS {caa} {
+#SEND cast a on hlakket;
+#SEND cast a on boss;
+#SEND cast a on delbert;
+};
+
+#ALIAS {cao %1} {
+#SEND cast a on %1;
+};
+
+#ALIAS {ccc %1} {
+#SEND cast chrenedict's corporeal covering on %1;
+};
+
+#ALIAS {gd} {
+#SEND bury corpses;
+#SEND recover fifty-rhinus in every corpse&ten-rhinus in every corpse&rhinus in every corpse&half-rhinus in every corpse&quarter rhinus in every corpse&half-dollars in every corpse&dollars in every corpse&ten-dollars in every corpse&royals in every corpse&crowns in every corpse&thanras in every corpse&ras in every corpse&talents in every corpse&tooni in every corpse&drachmas in every corpse&staters in every corpse&decadrachmas in every corpse&minas in every corpse&tyrants in every corpse&ducats in every corpse&forins in every corpse&livres in every corpse&hedgehogs in every corpse&sovereigns in every corpse&tencrowns in every corpse&shillings in every corpse;
+};
+
+#ALIAS {gem %1} {
+#SEND group emote %1;
+};
+
+#ALIAS {gs %1} {
+#SEND group say %1;
+};
+#ALIAS {ha} {
+#SEND health all;
+};
+
+#ALIAS {jpct %1} {
+#SEND get %1 from belt;
+#SEND cast jogloran's portal of cheaper travel on %1;
+#SEND put %1 in belt;
+};
+
+#ALIAS {ka} {
+#SEND kill all except players&shopkeepers&cats&hags&bats&wizards&priests&priestesses&clouds&summons&pets&camels&monkeys&palms&trees&luggages&dragons&kang wu&shopkeepers&stallowners&cobblers&ryattenoki&fireflies&lights&tneduts&phos-phor&lap-lip&lip-phon&mihk&ptyler&ptarquet&pkara&hattian guards&goldenblossom&moths&fireflies&johnny&pennie&jeef&cuthbert&tfat&bessie&kang&Kyakenko&camel traders&bodyguards&wun gold star&shi do gai&ug&ipsor&goldenleaf&goldenblossom&chickens&nyne gold dragon&skeletons&swarms&fruitbats&fences&citadel guards&klepton&cadalessa;
+};
+
+#ALIAS {led} {
+#SEND open door;
+#SEND look enter door;
+};
+
+#ALIAS {sl} {
+#SEND slash opponent in the neck with weapon 1;
+#SEND slash opponent in the neck with weapon 2;
+};
+#ALIAS {spf} {
+#SEND spellcheck fully transcendent pneumatic alleviator;
+};
+
+#ALIAS {st} {
+#SEND stab opponent in the heart with weapon 1;
+#SEND stab opponent in the heart with weapon 2;
+};
+
+#ALIAS {tad} {
+#SEND tactics attitude defensive;
+};
+
+#ALIAS {tan} {
+#SEND tactics attitude neutral;
+};
+
+#ALIAS {taw} {
+#SEND tactics attitude wimp;
+};
+#ALIAS {tpa %1} {
+#SEND cast transcendent pneumatic alleviator on %1;
+};
+
+#ALIAS {tr %1} {
+#SEND tell reply %1;
+};
+
+#ALIAS {wamg %1} {
+#SEND get %1 from belt;
+#SEND cast worstler's advanced metallurgical glance on %1;
+#SEND gaze into %1;
+#SEND put %1 in belt;
+};
