@@ -6,9 +6,9 @@
 #nop Assume we're starting in the heart;
 #VARIABLE currentNode {12};
 
-#VARIABLE enableShades {false};
-
 #VARIABLE shadesIndicator {};
+
+#VARIABLE macroStatus {On};
 
 #function {translateDir}
 {
@@ -25,9 +25,19 @@
     {
         #if {$newNode}
         {
-            #showme Moved %0;
-            #showme prev node $currentNode;
-            #showme current node $newNode;
+            #nop #showme %0;
+            #nop #showme Prev Node: [$currentNode];
+            #nop #showme Curr Node: [$newNode];
+
+            #format {shadesIndicator} {%c%0%c} {<fcf>} {<098>};
+            #showme $shadesIndicator;
+
+            #format {shadesIndicator} {%cPrev Node: [$currentNode]%c} {<060>} {<098>};
+            #showme $shadesIndicator;
+
+            #format {shadesIndicator} {%cCurr Node: [$newNode]%c} {<020>} {<098>};
+            #showme $shadesIndicator;
+
             #var currentNode {$newNode};
             #return $direction;
         }
@@ -62,9 +72,10 @@
     };
     #else
     {
-        #showme Assuming shade heart [Node 12];
-
         #VARIABLE currentNode {12};
+        #format {shadesIndicator} {%cAssuming shade heart [Node $currentNode]%c} {<020>} {<098>};
+        #showme $shadesIndicator;
+
         #nop Directions;
         #macro {i} 
         {
@@ -129,6 +140,16 @@
 
 #alias {/sh} 
 {
-    #showme macro called;
+    #if {$macromode}
+    {
+        #VARIABLE macroStatus {Off};
+    };
+    #else
+    {
+        #VARIABLE macroStatus {On};
+    }
+
+    #format {shadesIndicator} {%cShade Mapper: $macroStatus%c} {<060>} {<098>};
+    #showme $shadesIndicator;
     @togglemacros{};
 };
