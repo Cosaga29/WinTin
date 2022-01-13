@@ -42,24 +42,30 @@
 {
     #if {$macromode == 1}
     {
-         #unmacro {i};
-         #unmacro {l};
-         #unmacro {j};
-         #unmacro {,};
-         #unmacro {o};
-         #unmacro {u};
-         #unmacro {m};
-         #unmacro {.};
-         #unmacro {k};
-         #unmacro {d};
-         #unmacro {f};
-         #var macromode {0};
+        #nop Directions;
+        #unmacro {i};
+        #unmacro {l};
+        #unmacro {j};
+        #unmacro {,};
+        #unmacro {o};
+        #unmacro {u};
+        #unmacro {m};
+        #unmacro {.};
+
+        #nop Commands;
+        #unmacro {k};
+        #unmacro {d};
+        #unmacro {f};
+        #unmacro {e};
+        #unmacro {r};
+        #var macromode {0};
     };
     #else
     {
         #showme Assuming shade heart [Node 12];
 
         #VARIABLE currentNode {12};
+        #nop Directions;
         #macro {i} 
         {
             @translateDir{n};
@@ -92,6 +98,9 @@
         {
             @translateDir{se};
         };
+
+
+        #nop Commands;
         #macro {k} 
         {
             #send ka;
@@ -105,11 +114,20 @@
         {
             #send group follow all;
         };
+        #macro {e} 
+        {
+            #send put dirks in bag;
+        };
+        #macro {r} 
+        {
+            #send get dirks from bag;
+            #send hold dirks;
+        };
         #var macromode {1};
     }
 }
 
-#macro {5} 
+#alias {/sh} 
 {
     #showme macro called;
     @togglemacros{};
