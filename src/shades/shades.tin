@@ -1,0 +1,116 @@
+#VARIABLE shadeWidth {5};
+#VARIABLE shadeHeight {5};
+
+#VARIABLE macromode {0};
+
+#nop Assume we're starting in the heart;
+#VARIABLE currentNode {12};
+
+#VARIABLE enableShades {false};
+
+#VARIABLE shadesIndicator {};
+
+#function {translateDir}
+{
+    #var result {};
+    #script {result} {python3 src/shades/shades.py $currentNode %0};
+
+    #var direction {};
+    #var newNode {};
+
+    #list {result} {get} {1} {direction};
+    #list {result} {get} {2} {newNode};
+
+    #if {$direction}
+    {
+        #if {$newNode}
+        {
+            #showme Moved %0;
+            #showme prev node $currentNode;
+            #showme current node $newNode;
+            #var currentNode {$newNode};
+            #return $direction;
+        }
+    };
+    #else
+    {
+        #showme Failed to move! Toggle macro with '5'!;
+    }
+}
+
+#function {togglemacros} 
+{
+    #if {$macromode == 1}
+    {
+         #unmacro {i};
+         #unmacro {l};
+         #unmacro {j};
+         #unmacro {,};
+         #unmacro {o};
+         #unmacro {u};
+         #unmacro {m};
+         #unmacro {.};
+         #unmacro {k};
+         #unmacro {d};
+         #unmacro {f};
+         #var macromode {0};
+    };
+    #else
+    {
+        #showme Assuming shade heart [Node 12];
+
+        #VARIABLE currentNode {12};
+        #macro {i} 
+        {
+            @translateDir{n};
+        };
+        #macro {l} 
+        {
+            @translateDir{e};
+        };
+        #macro {j} 
+        {
+            @translateDir{w};
+        };
+        #macro {,} 
+        {
+            @translateDir{s};
+        };
+        #macro {o} 
+        {
+            @translateDir{ne};
+        };
+        #macro {u} 
+        {
+            @translateDir{nw};
+        };
+        #macro {m} 
+        {
+            @translateDir{sw};
+        };
+        #macro {.} 
+        {
+            @translateDir{se};
+        };
+        #macro {k} 
+        {
+            #send ka;
+        };
+        #macro {d} 
+        {
+            #send lose all;
+            #send unfollow all;
+        };
+        #macro {f} 
+        {
+            #send group follow all;
+        };
+        #var macromode {1};
+    }
+}
+
+#macro {5} 
+{
+    #showme macro called;
+    @togglemacros{};
+};

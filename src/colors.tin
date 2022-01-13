@@ -1,6 +1,3 @@
-#nop Set to true to enable xp colors;
-#VARIABLE enable_xp_color {};
-
 #VARIABLE burdenminor {15};
 #VARIABLE burdenmajor {20};
 
@@ -9,11 +6,6 @@
 
 #VARIABLE hpminor {1500};
 #VARIABLE hpmajor {1000};
-
-#VARIABLE maxxp {20000000};
-#VARIABLE minxp {0};
-
-#list {digits} {cre} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {A} {B} {C} {D} {E} {F};
 
 #nop colors
 #function {tpa_col}
@@ -58,12 +50,14 @@
 	#return <128>;
 }
 
+#list {digits} {cre} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {A} {B} {C} {D} {E} {F};
 #function {dectohex}
 {
     #var colresult {};
     #local num {%0};
     #local div {};
     #local rem {};
+    #local length {};
 
     #while {$num > 0} 
     {
@@ -113,44 +107,11 @@
         };
     };
 
+    #format {length} {%L} {$colresult};
+    #if {$length < 2} 
+    {
+        #var colresult {0$colresult};
+    };
+
     #return $colresult;
-}
-
-#function {xpblue}
-{
-    #local blue {};
-    #if {%0 > 20000000}
-    {
-        #return FF;
-    };
-
-    #math {blue}
-    {
-        (1.0 * %0) / ($maxxp * 1.0) * 256.0
-    };
-    #format {blue} {%d} {$blue};
-
-    #return @dectohex{$blue};
-}
-
-#function {xpgreen}
-{
-    #return 00;
-}
-
-#function {xpred}
-{
-    #local red {};
-    #if {%0 > 20000000}
-    {
-        #return 00;
-    };
-
-    #math {red}
-    {
-        (1.0 - ((1.0 * %0) / ($maxxp * 1.0))) * 256.0
-    };
-    #format {red} {%d} {$red};
-
-    #return @dectohex{$red};
 }

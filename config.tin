@@ -12,6 +12,8 @@
 
 #SPLIT {2} {1};
 
+#READ {src/shades/shades.tin};
+
 #READ {src/colors.tin};
 
 #READ {src/channels.tin};

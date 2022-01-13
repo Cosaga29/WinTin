@@ -23,7 +23,7 @@
 #HIGHLIGHT {hoplite} {bold pink};
 #HIGHLIGHT {philosopher} {bold pink};
 #HIGHLIGHT {lascarim} {bold pink};
-#HIGHLIGHT {sailor} {green};
+#HIGHLIGHT {sailor} {bold pink};
 #HIGHLIGHT {{hefty|burly|wiry} m{e|a}n} {bold pink};
 #HIGHLIGHT {athlete} {bold pink};
 #HIGHLIGHT {palace guard} {bold pink};

@@ -3,9 +3,6 @@
 #nop Set to true to enable vital monitor;
 #VARIABLE enable_vitals {true};
 
-#nop Set to true to enable xp colors;
-#VARIABLE enable_xp_color {true};
-
 #VARIABLE vitals {};
 #VARIABLE sep {};
 
@@ -22,6 +19,11 @@
         #format {prompt_tpa} {%cTPA%c} {@tpa_col{$tpa_color}} {<098>};
     };
 
+    #var {prompt_macromode} {};
+    #if {$macromode == 1} {
+        #format {prompt_macromode} {%cMACRO%c} {<118>} {<098>};
+    };
+
     #nop Quota monitor details;
     #var {prompt_quota} {};
     #if {&quota} {
@@ -34,19 +36,11 @@
         #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
         #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
         #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
-
-        #if {$enable_xp_color == "true"} 
-        {
-            #format {xp_color} {%cXP: %G%c} {<F@xpred{$GMCP[vitals][xp]}00@xpblue{$GMCP[vitals][xp]}>} {$GMCP[vitals][xp]};
-        };
-        #else 
-        {
-            #format {xp_color} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
-        };
+        #format {xp_color} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
 
         #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp_color};
     };
 
-    #format {prompt_line} {%+5s %+40s %+15s %+10s} {$prompt_tpa} {$prompt_xp} {$prompt_quota} {$vitals};
+    #format {prompt_line} {%+0s %+30s %+15s %+15s %+10s} {$vitals} {$prompt_xp} {$prompt_quota} {$prompt_macromode} {$prompt_tpa};
     #showme {$prompt_line} {-1};
 }
