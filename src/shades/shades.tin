@@ -26,14 +26,13 @@
         #if {$newNode}
         {
             #showme Moved %0;
-            #showme sending $direction;
             #return $direction;
             #var currentNode {$newNode};
         }
     };
     #else
     {
-        #showme Failed to move! Disable with /shades!;
+        #showme Failed to move! Toggle macro with '11'!;
     }
 }
 
@@ -41,54 +40,65 @@
 {
     #if {$macromode == 1}
     {
-         #unmacro {e};
-         #unmacro {f};
-         #unmacro {s};
-         #unmacro {c};
-         #unmacro {r};
-         #unmacro {w};
-         #unmacro {x};
-         #unmacro {v};
+         #unmacro {i};
+         #unmacro {l};
+         #unmacro {j};
+         #unmacro {,};
+         #unmacro {o};
+         #unmacro {u};
+         #unmacro {m};
+         #unmacro {.};
+         #unmacro {k};
          #unmacro {d};
+         #unmacro {f};
          #var macromode {0};
     };
     #else
     {
-        #macro {e} 
+        #macro {i} 
         {
             @translateDir{n};
         };
-        #macro {f} 
+        #macro {l} 
         {
             @translateDir{e};
         };
-        #macro {s} 
+        #macro {j} 
         {
             @translateDir{w};
         };
-        #macro {c} 
+        #macro {,} 
         {
             @translateDir{s};
         };
-        #macro {r} 
+        #macro {o} 
         {
             @translateDir{ne};
         };
-        #macro {w} 
+        #macro {u} 
         {
             @translateDir{nw};
         };
-        #macro {x} 
+        #macro {m} 
         {
             @translateDir{sw};
         };
-        #macro {v} 
+        #macro {.} 
         {
             @translateDir{se};
         };
-        #macro {d} 
+        #macro {k} 
         {
             #send ka;
+        };
+        #macro {d} 
+        {
+            #send lose all;
+            #send unfollow all;
+        };
+        #macro {f} 
+        {
+            #send group follow all;
         };
         #var macromode {1};
     }
