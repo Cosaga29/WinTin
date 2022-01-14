@@ -1,0 +1,44 @@
+#VARIABLE {chat_file} {logs/chat.log}
+
+#CONFIG {SPEEDWALK} {OFF};
+#CONFIG {SPLIT};
+#CONFIG {PACKET PATCH} {5};
+#CONFIG {COLOR PATCH} {ON};
+#CONFIG {MCCP} {ON};
+#CONFIG {LOG} {RAW};
+#CONFIG {BUFFER SIZE} {2000};
+#CONFIG {COMMAND COLOR} {<fcf>}; 
+#CONFIG {REPEAT ENTER} {ON};
+
+#SPLIT {1};
+
+#READ {src/colors.tin};
+
+#READ {src/channels.tin};
+#READ {src/actions.tin};
+#READ {src/aliases.tin};
+#READ {src/macros.tin};
+#READ {src/gmcp.tin};
+
+#READ {src/mobileprompt.tin};
+#READ {src/xpmonitor.tin};
+#READ {src/tpamonitor.tin};
+#READ {src/spottimers.tin};
+#NOP READ {src/quota.tin};
+
+#READ {src/combat.tin};
+#READ {src/deadletter.tin};
+#READ {src/db.tin};
+#READ {src/magic.tin};
+
+#NOP READ {src/missions.tin};
+#READ {src/group.tin};
+
+#READ {src/manualmapdoortext.tin};
+
+#SESSION {discworld} {discworld.starturtle.net} {4242};
+
+#NOP FORMAT {log_file} {logs/active/%t.log} {%Y-%m-%d};
+#NOP LOG {APPEND} {$log_file};
+
+#FORMAT {start_time} {%T};
