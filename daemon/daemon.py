@@ -12,16 +12,19 @@ socket = phxsocket.Client("ws://localhost:4000/socket/websocket", {"params": {"t
 
 if socket.connect(): # blocking, raises exception on failure
   topic = "user_map:{}".format(username)
-  print(topic)
   channel = socket.channel(topic, {})
   resp = channel.join() # also blocking, raises exception on failure
 
   socket.on_close = lambda socket: socket.connect()
 
   def respond(payload):
-    print(payload)
+      # do nothing
 
   filename = "../logs/follows.log"
+  # create file if doesn't exist
+  if not os.path.exists(filename):
+    open(filename, 'w').close()
+
   cached_stamp = os.stat(filename).st_mtime
   # get first line from ../logs/follows.log
   while True:
