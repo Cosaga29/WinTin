@@ -1,6 +1,0 @@
-{
-  "python.analysis.extraPaths": [
-    "C:/Python39/lib/site-packages",
-    "./src/shades"
-  ]
-}
