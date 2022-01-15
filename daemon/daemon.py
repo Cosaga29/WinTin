@@ -17,9 +17,6 @@ if socket.connect(): # blocking, raises exception on failure
 
   socket.on_close = lambda socket: socket.connect()
 
-  def respond(payload):
-      # do nothing
-
   filename = "../logs/follows.log"
   # create file if doesn't exist
   if not os.path.exists(filename):
@@ -33,5 +30,5 @@ if socket.connect(): # blocking, raises exception on failure
     if stamp != cached_stamp:
         with open(filename, 'r') as f:
             line = f.readline().rstrip()
-            channel.push("mud_msg", {"body": {"room_short": line}}, respond)
+            channel.push("mud_msg", {"body": {"room_short": line}})
             cached_stamp = stamp
