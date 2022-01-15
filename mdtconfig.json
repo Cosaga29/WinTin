@@ -56,7 +56,7 @@
         ["lascarim",                        "orange",   3,  false],
         ["sailor",                          "orange",   2,  false],
         ["athlete",                         "orange",   3,  false],
-        ["(hefty|burly|wiry) m(e|a)n",      "orange",   5,  true],
+        ["(hefty|burly|wiry|tough) m(e|a)n",      "orange",   5,  true],
 
         ["Sto Plains Highlights"],
         ["knight",            "orange",  4,  false],
