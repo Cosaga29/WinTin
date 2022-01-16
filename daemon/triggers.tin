@@ -1,0 +1,2 @@
+#action {^[%1]$} {#script {python3 -c 'f = open("logs/look.log", "w");f.write("%1");'}}
+#action {^You follow %1 %2.$} {#script {python3 -c 'f = open("logs/map.log", "w");f.write("%2");'}}
