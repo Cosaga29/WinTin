@@ -1,4 +1,7 @@
-#VARIABLE {chat_file} {logs/chat.log}
+#VARIABLE {ENABLE_MAP_LOGGING} {0};
+
+#VARIABLE {map_file} {logs/map.log};
+#VARIABLE {chat_file} {logs/chat.log};
 
 #CONFIG {SPEEDWALK} {OFF};
 #CONFIG {SPLIT};
@@ -47,5 +50,17 @@
 
 #FORMAT {log_file} {logs/active/%t.log} {%Y-%m-%d};
 #LOG {APPEND} {$log_file};
+
+#if {$ENABLE_MAP_LOGGING}
+{
+    #EVENT {RECEIVED INPUT} 
+    {
+        #regexp {%0} {^{n|e|s|w|ne|nw|se|sw}$}
+        {
+            #system {truncate -s 0 $map_file};
+            #line {log} {$map_file} {%0};
+        }
+    };
+};
 
 #FORMAT {start_time} {%T};

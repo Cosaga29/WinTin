@@ -21,7 +21,7 @@
         #regexp {%1} {%*from here.$}
         {
             #nop On a successful match: stop watching the output and reset the buffer;
-            #SYSTEM {rm logs/mapdoortext.log && touch logs/mapdoortext.log};
+            #SYSTEM {truncate -s 0 logs/mapdoortext.log};
 
             #LINE {log} {logs/mapdoortext.log} {$buffer};
             #list {buffer} {clear};
