@@ -1,4 +1,7 @@
+#VARIABLE {ENABLE_MAP_LOGGING} {1};
+
 #VARIABLE {chat_file} {logs/chat.log}
+#VARIABLE {map_file} {logs/map.log};
 
 #CONFIG {SPEEDWALK} {OFF};
 #CONFIG {SPLIT};
@@ -38,9 +41,30 @@
 
 #READ {src/manualmapdoortext.tin};
 
+#READ {user/system.tin};
+#READ {user/generalalias.tin};
+#READ {user/wizalias.tin};
+#READ {user/priestalias.tin};
+#READ {user/timers.tin};
+#READ {user/macros.tin};
+#READ {daemon/triggers.tin};
+
 #SESSION {discworld} {discworld.starturtle.net} {4242};
 
 #FORMAT {log_file} {logs/active/%t.log} {%Y-%m-%d};
 #LOG {APPEND} {$log_file};
+
+#if {$ENABLE_MAP_LOGGING}
+{
+    #EVENT {RECEIVED INPUT} 
+    {
+        #regexp {%0} {^{n|e|s|w|ne|nw|se|sw}$}
+        {
+            #showme regex match;
+            #system {rm $map_file && touch $map_file};
+            #line {log} {$map_file} {%0};
+        }
+    };
+}
 
 #FORMAT {start_time} {%T};
