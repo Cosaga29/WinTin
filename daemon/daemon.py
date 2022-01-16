@@ -8,7 +8,7 @@ with open('follows.json', 'r') as f:
     follows = json.load(f)
     username = follows['username']
 
-    socket = phxsocket.Client("ws://localhost:4000/socket/websocket", {"params": {"token": None}})
+    socket = phxsocket.Client("ws://67.207.80.231:4000/socket/websocket", {"params": {"token": None}})
 
     if socket.connect(): # blocking, raises exception on failure
       topic = "user_map:{}".format(username)
