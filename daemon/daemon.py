@@ -36,6 +36,7 @@ with open('follows.json', 'r') as f:
         if follows_stamp != follows_cached_stamp:
             with open(follows_filename, 'r') as f:
                 line = f.readline().rstrip()
+                # check if line contains "*UNIQUE*"
                 channel.push("mud_msg", {"body": {"direction": line, "username": username}})
                 follows_cached_stamp = follows_stamp
         
@@ -44,5 +45,11 @@ with open('follows.json', 'r') as f:
         if look_stamp != look_cached_stamp:
             with open(look_filename, 'r') as f:
                 line = f.readline().rstrip()
-                channel.push("mud_msg", {"body": {"room_short": line, "username": username}})
+                if "*UNIQUE*" in line:
+                  line = line[:-9]
+                  print(line)
+                  channel.push("mud_msg", {"body": {"room_short": line, "username": username, "unique": True}})
+                else:
+                  print(line)
+                  channel.push("mud_msg", {"body": {"room_short": line, "username": username}})
                 look_cached_stamp = look_stamp
