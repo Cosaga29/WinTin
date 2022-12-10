@@ -4,6 +4,14 @@ Shades mode can be toggled by entering `/sh`
 
 ### Movement
 The following keys are used to move while in the shades: u i o j l m , .
+- `u` - NW
+- `i` - N
+- `o` - NE
+- `j` - W
+- `l` - E
+- `m` - SW
+- `,` - S
+- `.` - SE
 
 ### Actions
 The following keys are used to perform actions while in the shades:
