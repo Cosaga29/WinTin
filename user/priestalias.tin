@@ -118,3 +118,12 @@
 {
     perform stasis on %1;
 };
+
+#alias {charge %1}
+{
+    get %1 from pack;
+    hold %1;
+    pray;
+    put %1 in pack;
+    hold fangs;
+};
