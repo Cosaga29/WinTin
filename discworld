@@ -42,7 +42,9 @@ if [ -n "$TMUX" ] || [ "$DISC_SESSION_CREATE" = "1" ]; then
     tmux split-window -v -b -l 5
     tmux send-keys './bin/mdt' 'C-m'
     tmux select-pane -t 1
-    
+    tmux resize-pane -U 7 
+    tmux resize-pane -R 10 
+ 
     fi
     
 if [ -z "$TMUX" ]; then
