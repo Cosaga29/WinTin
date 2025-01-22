@@ -35,6 +35,6 @@
         #format {vitals} {%s %s %s %s %s %s %s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp_color};
     };
 
-    #format {prompt_line} { %s %+40s %+15s %+15s %+10s} {$vitals} {$prompt_xp} {$prompt_tpa} {$prompt_macromode};
+    #format {prompt_line} { %s %+35s %+5s %+5s } {$vitals} {$prompt_xp} {$prompt_tpa} {$prompt_macromode};
     #showme {$prompt_line} {-1};
 }
