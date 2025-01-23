@@ -1,4 +1,4 @@
-cd ~/mud/discworld
+cd /home/alex/WinTin
 
 # No existing discworld session? Then create one
 if [[ ! $(tmux ls -F '#S') =~ discworld ]]; then
