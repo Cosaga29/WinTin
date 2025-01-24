@@ -5,65 +5,44 @@ import time
 import os
 import re
 
-from mdt_types import RoomInfo
-from maps import NUMBER_MAP, DIRECTION_MAP, TERMINAL_RESET_COLOR
-from config import CONFIG, USER_MATCHES, MDT_PARSE_DIR
-
-
-EXIT_TOKENS = (
-    "exit",
-    "doors ",
-    "a door ",
-    "exits ",
-    "an exit ",
-    "a hard to see through exit ",
-    "limit of your",
+from mdt.definitions import RoomInfo, TokenType, NUMBER_MAP, DIRECTION_MAP, EXIT_TOKENS
+from mdt.config import (
+    USER_MATCHES,
+    MDT_PARSE_DIR,
+    DEFAULT_CURSE_COLOR,
+    MIN_ROOM_VALUE,
+    DEFAULT_NPC_VALUE,
+    CURSES_COLOR_PAIR_MAP,
 )
 
+TINTIN_ARRAY_START = re.compile(r"({[0-9]})|({)")
+TINTIN_ARRAY_END = re.compile(r"}")
 
-def is_tintin_array(line) -> bool:
+
+def is_tintin_array(line: str) -> bool:
+    """Determines if the line is a tt array. Arrays start with {1}
+
+    Args:
+        line (str): The line
+
+    Returns:
+        bool: If the line is a tintin array
+    """
     # tt++ arrays have the format {1}text{2}text
     return line[0] == "{" and line[2] == "}"
 
 
-def find_npc_start_location_index(lines: list[str]) -> int:
-    # Look for the first entry in the map door text list that involves the current room.
-    # This removes the ASCII map and other unwanted data from the list
-    for i in reversed(range(len(lines))):
-        if "[" and "]" in lines[i]:
-            return i
+def transform_tintin_array(mdt_line: str) -> str:
+    """Stringifys the tintin array to a normal string.
 
-    return -1
+    Args:
+        mdt_line (str): The tintin array string
 
-
-def handle_tintin_array(mdt_line: str) -> str:
-    if is_tintin_array(mdt_line):
-        mdt_text = ""
-
-        # Split out TinTin array into a list
-        lines = re.split("{|}", mdt_line)
-        npc_locations_start_idx = find_npc_start_location_index(lines)
-
-        # Pattern match things standing around in other rooms
-        for i in range(npc_locations_start_idx, len(lines)):
-            if "is standing" in lines[i]:
-                continue
-
-            line = lines[i].replace("are", "is")
-
-            # Look for 'NPC is some_distance from here.
-            if (
-                len(line) > 0
-                and line[0].isalpha()
-                and re.match(r".*is (one|two|three|four|five).*|.* from here.", line)
-            ):
-                mdt_text += line + " "
-
-        if len(mdt_text) > 0:
-            return mdt_text
-
-    # Effectively do nothing
-    return mdt_line
+    Returns:
+        str: The transformed string
+    """
+    mdt_line = re.sub(TINTIN_ARRAY_START, "", mdt_line)
+    return re.sub(TINTIN_ARRAY_END, " ", mdt_line)
 
 
 def tokenize(line: str) -> list[str]:
@@ -78,20 +57,19 @@ def tokenize(line: str) -> list[str]:
     return line.split(", ")
 
 
-def get_quantity(token: str) -> int:
-    if token in NUMBER_MAP:
-        return NUMBER_MAP[token]
-    for nm_key in NUMBER_MAP:
-        if entry.startswith(nm_key):
-            quantity = NUMBER_MAP[nm_key]
-            entry = entry[len(nm_key) :]
-            break
+def get_token_context(token: str) -> tuple[str | None, int | None, str, TokenType]:
+    """Parses the token string to determine if it references an entity or a direction.
 
+    Args:
+        token (str): The token string
 
-def get_token_context(token: str) -> dict:
+    Returns:
+        tuple[str | None, int | None, str, TokenType]: Tuple containing the tokenized context
+    """
     direction = None
     count = None
     token_mentions_direction = False
+    token_type = TokenType.DIRECTION
 
     entity = ""
 
@@ -107,12 +85,19 @@ def get_token_context(token: str) -> dict:
 
         # If this token doesn't mention direction, assume it's about an entity
         if not token_mentions_direction:
+            token_type = TokenType.ENTITY
             entity += sub_token + " "
 
-    return direction, count, entity[:-1]
+    return direction, count, entity[:-1], token_type
 
 
 def write_rooms(room_data: dict[tuple[int, str], RoomInfo]):
+    """Writes the rooms to the terminal.
+
+    Args:
+        room_data (dict[tuple[int, str], RoomInfo]): The room data to write
+    """
+
     def calc_longest_room_dir_length(room_data: dict):
         longest_dir = -1
         for room_dir in room_data.keys():
@@ -125,39 +110,66 @@ def write_rooms(room_data: dict[tuple[int, str], RoomInfo]):
 
         return longest_dir
 
+    max_y, max_x = stdscr.getmaxyx()
+
     # Ensure that all the directions line up in the output
-    room_direction_width = calc_longest_room_dir_length(room_data)
+    score_pos_offset = calc_longest_room_dir_length(room_data)
 
     stdscr.clear()
-
     y = 0
     for room_dir, room_info in sorted(
         room_data.items(), key=lambda x: x[1].score, reverse=True
     ):
-        output = ""
-        for dir in room_dir:
-            output += f"{dir[0]} {dir[1]}, "
-        output = output[:-2]
+        if y >= max_y:
+            break
 
-        line = "{{:<{}}} [{{}}] ".format(room_direction_width)
-        line = line.format(output, room_info.score)
-        line = "{} {}".format(line, ", ".join(room_info.entities))
+        x = 0
+        for i, dir in enumerate(room_dir):
+            dir_str = (
+                f"{dir[0]} {dir[1]}"
+                if i == len(room_dir) - 1
+                else f"{dir[0]} {dir[1]},"
+            )
+            stdscr.addstr(y, x, dir_str)
+            x += len(dir_str)
 
-        stdscr.addstr(y, 0, line, curses.color_pair(1))
+        room_score_str = f"[{room_info.score}] "
+        x = score_pos_offset
+        stdscr.addstr(y, x, room_score_str)
+
+        x += len(room_score_str)
+        for i, entity in enumerate(room_info.entities):
+            entity_str = (
+                f"{entity}" if i == len(room_info.entities) - 1 else f"{entity}, "
+            )
+            stdscr.addstr(y, x, entity_str, curses.color_pair(room_info.colors[i]))
+            x += len(entity_str)
+
         y += 1
-    
+
     stdscr.refresh()
 
 
 def apply_match_configs(
     room_data: dict[tuple[int, str], RoomInfo]
 ) -> dict[tuple[int, str], RoomInfo]:
+    """Applys the user config regex matches to rooms parsed from the MDT information.
+    Scores the entities in the associated rooms.
+    Associates colors with each entity in the room.
+
+    Args:
+        room_data (dict[tuple[int, str], RoomInfo]): The parsed rooms
+
+    Returns:
+        dict[tuple[int, str], RoomInfo]: The filtered, colored and scored rooms
+    """
     for room in room_data.values():
         room_score = 0
 
-        for i, entity in enumerate(room.entities):
+        for entity in room.entities:
             # There has got to be a more efficient way of doing this
-            entity_score = CONFIG["default_npc_value"]
+            entity_score = DEFAULT_NPC_VALUE
+            entity_curse_color = DEFAULT_CURSE_COLOR
 
             for match in USER_MATCHES:
                 # If pattern is a string, just search in string
@@ -166,25 +178,25 @@ def apply_match_configs(
                     and match.pattern.match(entity)
                 ):
                     entity_score = match.score
+                    entity_curse_color = match.curses_color_code
                     break
 
             room_score += entity_score
+            room.colors.append(entity_curse_color)
 
         room.score = room_score
 
     # Filter Rooms that are below min score
-    filtered_rooms = {
-        k: v for k, v in room_data.items() if v.score > CONFIG["minimum_room_value"]
-    }
+    filtered_rooms = {k: v for k, v in room_data.items() if v.score >= MIN_ROOM_VALUE}
     return filtered_rooms
 
 
 def run_parser(lines: list[str]) -> list[str]:
     # The output from tt++ is always a single line
-    line = lines[0]
-    mdt_line = handle_tintin_array(line)
+    mdt_line = lines[0]
+    if is_tintin_array(mdt_line):
+        mdt_line = transform_tintin_array(mdt_line)
 
-    # Tokenize
     mdt_tokens = tokenize(mdt_line)
 
     # Room data is all unique room locations associated with their score and entity list
@@ -192,32 +204,49 @@ def run_parser(lines: list[str]) -> list[str]:
 
     subjects = []
     directions = []
+    last_token = TokenType.NONE
+
+    def add_room(
+        subjects: list, directions: list, room_data: dict[tuple[int, str], RoomInfo]
+    ):
+        unique_dir_key = tuple(directions)
+
+        if unique_dir_key not in room_data:
+            room_data[unique_dir_key] = RoomInfo(score=-1, entities=[])
+
+        room_data[unique_dir_key].entities.extend(subjects)
+        subjects.clear()
+        directions.clear()
 
     for token in mdt_tokens:
-        # Skip entries only involving exists
+        # The MDT output involves series of tokens. The tokens are classified as either
+        # having an entity or having a direction. The parser works on the assumption that
+        # discworld will group entities and directions together i.e.
+        # "a large man, a large woman, are 2 south, 2 southwest".
+        # The parsing of a room is 'complete' once we hit an exist token, OR
+        # if the the last token we parsed was a direction and the new one is an entity
         if token.startswith(EXIT_TOKENS) or "the limit of your" in token:
             if len(subjects) > 0 and len(directions) > 0:
-                # Note that a direction should always follow a subject or list of subjects
-                # i.e.  ["a fearless hoplite", "is one southwest"]
-                # i.e.2 ["a venerable priest", "a sleepy tortoise", "are one north"]
-                # i.e.3 ["a large black hen", "a black-haired old cobbler", "are one northwest", "one north"]
-                # A room is defined by its direction and counts in that direction to get to the room
-                unique_dir_key = tuple(directions)
-
-                if unique_dir_key not in room_data:
-                    room_data[unique_dir_key] = RoomInfo(score=-1, entities=[])
-
-                room_data[unique_dir_key].entities.extend(subjects)
-                subjects.clear()
-                directions.clear()
+                add_room(subjects, directions, room_data)
         else:
             # Break the token into its directions, counts, subject
-            direction, count, subject = get_token_context(token)
-            if len(subject) > 0 and count is not None:
-                # TODO: Determine if we should include a count of the subject in the result
-                subjects.append(f"{subject}")
-            elif len(subjects) > 0 and direction is not None and count is not None:
+            direction, count, subject, this_token = get_token_context(token)
+
+            if last_token == TokenType.DIRECTION and this_token == TokenType.ENTITY:
+                # We're done with the old room
+                add_room(subjects, directions, room_data)
+                subjects.append(subject)
+                last_token = this_token
+                continue
+
+            # Otherwise we're still building the room definition
+            if this_token == TokenType.DIRECTION:
                 directions.append((count, direction))
+
+            if this_token == TokenType.ENTITY:
+                subjects.append(subject)
+
+            last_token = this_token
 
     room_data = apply_match_configs(room_data)
     write_rooms(room_data)
@@ -233,15 +262,10 @@ def watch_files(filename: str):
             # If the files modified time has changed, run the parser
             if new_time != last_update_time:
                 last_update_time = new_time
-                # run_parser([t4])
                 run_parser(f.readlines())
                 f.seek(0)
 
-            time.sleep(0.5)
-
-
-def init_colors():
-    return
+            time.sleep(0.2)
 
 
 if __name__ == "__main__":
@@ -249,13 +273,13 @@ if __name__ == "__main__":
         stdscr = curses.initscr()
         curses.start_color()
         curses.use_default_colors()
+        curses.curs_set(0)
 
-        CURSES_COLOR_MAP = {
-            "orange": curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK),
-            "red": curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK),
-            "cyan": curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK),
-            "reset": curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK),
-        }
+        # Initialize MDT color pairs after we've initialized the curse screen
+        for mdt_color, curses_color_pair in CURSES_COLOR_PAIR_MAP.items():
+            curses.init_pair(
+                mdt_color.value, curses_color_pair[0], curses_color_pair[1]
+            )
 
         mdt_log_path = os.path.abspath(
             os.path.join(MDT_PARSE_DIR, "../../logs/mapdoortext.log")

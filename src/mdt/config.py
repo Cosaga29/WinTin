@@ -1,9 +1,43 @@
 import re
 import os
 import json
+import curses
+from enum import Enum
 
-from maps import COLOR_MAP
-from mdt_types import ConfigEntry
+from mdt.definitions import ConfigEntry
+
+
+class MdtColors(Enum):
+    WHITE_BLACK = 1
+    CYAN_BLACK = 2
+    RED_BLACK = 3
+    YELLOW_BLACK = 4
+
+
+CONFIG_COLOR_MAP = {
+    "reset": MdtColors.WHITE_BLACK,
+    "cyan": MdtColors.CYAN_BLACK,
+    "red": MdtColors.RED_BLACK,
+    "orange": MdtColors.YELLOW_BLACK,
+}
+
+BASH_COLOR_MAP = {
+    # http://terminal-color-builder.mudasobwa.ru/
+    MdtColors.YELLOW_BLACK: "\033[01;38;05;214m",
+    MdtColors.RED_BLACK: "\033[01;38;05;196m",
+    MdtColors.CYAN_BLACK: "\033[01;38;05;37m",
+    MdtColors.WHITE_BLACK: "\033[00;39;49m",
+}
+
+CURSES_COLOR_PAIR_MAP = {
+    MdtColors.WHITE_BLACK: (curses.COLOR_WHITE, curses.COLOR_BLACK),
+    MdtColors.CYAN_BLACK: (curses.COLOR_CYAN, curses.COLOR_BLACK),
+    MdtColors.RED_BLACK: (curses.COLOR_RED, curses.COLOR_BLACK),
+    MdtColors.YELLOW_BLACK: (curses.COLOR_YELLOW, curses.COLOR_BLACK),
+}
+
+DEFAULT_CURSE_COLOR = MdtColors.WHITE_BLACK
+BASH_TERM_RESET_COLOR = "\033[00;39;49m"
 
 MDT_PARSE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -26,14 +60,18 @@ def build_match_config(config: dict) -> list[ConfigEntry]:
             pattern = match_entry[0]
 
         # Reset the color by default
-        terminal_color_code = COLOR_MAP["reset"]
+        terminal_color_code = BASH_COLOR_MAP["reset"]
+        curses_color_code = CONFIG_COLOR_MAP["reset"]
 
         # Check if we have a valid color entry for this match
-        if match_entry[1] != "" and match_entry[1] in COLOR_MAP:
-            terminal_color_code = COLOR_MAP[match_entry[1]]
+        if match_entry[1] != "":
+            if match_entry[1] in BASH_COLOR_MAP:
+                terminal_color_code = BASH_COLOR_MAP[match_entry[1]]
+            if match_entry[1] in CONFIG_COLOR_MAP:
+                curses_color_code = CONFIG_COLOR_MAP[match_entry[1]]
 
         match_config_list.append(
-            ConfigEntry(pattern, terminal_color_code, match_entry[2])
+            ConfigEntry(pattern, terminal_color_code, curses_color_code, match_entry[2])
         )
 
     return match_config_list
