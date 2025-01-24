@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
+import curses
 import time
 import os
 import re
-from dataclasses import dataclass, field
 
+from mdt_types import RoomInfo
 from maps import NUMBER_MAP, DIRECTION_MAP, TERMINAL_RESET_COLOR
 from config import CONFIG, USER_MATCHES, MDT_PARSE_DIR
+
 
 EXIT_TOKENS = (
     "exit",
@@ -17,12 +19,6 @@ EXIT_TOKENS = (
     "a hard to see through exit ",
     "limit of your",
 )
-
-
-@dataclass
-class RoomInfo:
-    score: int = 0
-    entities: list[str] = field(default_factory=list)
 
 
 def is_tintin_array(line) -> bool:
@@ -132,6 +128,9 @@ def write_rooms(room_data: dict[tuple[int, str], RoomInfo]):
     # Ensure that all the directions line up in the output
     room_direction_width = calc_longest_room_dir_length(room_data)
 
+    stdscr.clear()
+
+    y = 0
     for room_dir, room_info in sorted(
         room_data.items(), key=lambda x: x[1].score, reverse=True
     ):
@@ -143,9 +142,11 @@ def write_rooms(room_data: dict[tuple[int, str], RoomInfo]):
         line = "{{:<{}}} [{{}}] ".format(room_direction_width)
         line = line.format(output, room_info.score)
         line = "{} {}".format(line, ", ".join(room_info.entities))
-        print(line)
 
-    return
+        stdscr.addstr(y, 0, line, curses.color_pair(1))
+        y += 1
+    
+    stdscr.refresh()
 
 
 def apply_match_configs(
@@ -156,11 +157,7 @@ def apply_match_configs(
 
         for i, entity in enumerate(room.entities):
             # There has got to be a more efficient way of doing this
-            matched = False
             entity_score = CONFIG["default_npc_value"]
-            entity_with_color = (
-                f"{TERMINAL_RESET_COLOR}{room.entities[i]}{TERMINAL_RESET_COLOR}"
-            )
 
             for match in USER_MATCHES:
                 # If pattern is a string, just search in string
@@ -169,10 +166,8 @@ def apply_match_configs(
                     and match.pattern.match(entity)
                 ):
                     entity_score = match.score
-                    entity_with_color = f"{match.terminal_color_code}{room.entities[i]}{TERMINAL_RESET_COLOR}"
                     break
 
-            room.entities[i] = entity_with_color
             room_score += entity_score
 
         room.score = room_score
@@ -245,8 +240,32 @@ def watch_files(filename: str):
             time.sleep(0.5)
 
 
+def init_colors():
+    return
+
+
 if __name__ == "__main__":
-    mdt_log_path = os.path.abspath(
-        os.path.join(MDT_PARSE_DIR, "../../logs/mapdoortext.log")
-    )
-    watch_files(mdt_log_path)
+    try:
+        stdscr = curses.initscr()
+        curses.start_color()
+        curses.use_default_colors()
+
+        CURSES_COLOR_MAP = {
+            "orange": curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK),
+            "red": curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK),
+            "cyan": curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK),
+            "reset": curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK),
+        }
+
+        mdt_log_path = os.path.abspath(
+            os.path.join(MDT_PARSE_DIR, "../../logs/mapdoortext.log")
+        )
+        watch_files(mdt_log_path)
+    except Exception as e:
+        print(e)
+    finally:
+        # Cleanup
+        curses.nocbreak()
+        stdscr.keypad(False)
+        curses.echo()
+        curses.endwin()

@@ -1,3 +1,5 @@
+import curses
+
 NUMBER_MAP = {
     "a": 1,
     "a ": 1,
@@ -62,4 +64,11 @@ COLOR_MAP = {
     "red": "\033[01;38;05;196m",
     "cyan": "\033[01;38;05;37m",
     "reset": "\033[00;39;49m",
+}
+
+CURSES_COLOR_MAP = {
+    "orange": "\033[01;38;05;214m",
+    "red": "\033[01;38;05;196m",
+    "cyan": "\033[01;38;05;37m",
+    "reset": curses.init_pair(1, curses.COLOR_MAGENTA, curses.COLOR_BLACK),
 }

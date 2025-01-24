@@ -1,17 +1,11 @@
 import re
 import os
 import json
-from typing import NamedTuple
 
 from maps import COLOR_MAP
+from mdt_types import ConfigEntry
 
 MDT_PARSE_DIR = os.path.abspath(os.path.dirname(__file__))
-
-
-class ConfigEntry(NamedTuple):
-    pattern: re.Pattern | str
-    terminal_color_code: str
-    score: int
 
 
 def build_match_config(config: dict) -> list[ConfigEntry]:
