@@ -5,8 +5,8 @@ import time
 import os
 import re
 
-from mdt.definitions import RoomInfo, TokenType, NUMBER_MAP, DIRECTION_MAP, EXIT_TOKENS
-from mdt.config import (
+from definitions import RoomInfo, TokenType, NUMBER_MAP, DIRECTION_MAP, EXIT_TOKENS
+from config import (
     USER_MATCHES,
     MDT_PARSE_DIR,
     DEFAULT_CURSE_COLOR,

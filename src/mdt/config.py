@@ -4,7 +4,7 @@ import json
 import curses
 from enum import Enum
 
-from mdt.definitions import ConfigEntry
+from definitions import ConfigEntry
 
 
 class MdtColors(Enum):
@@ -36,7 +36,7 @@ CURSES_COLOR_PAIR_MAP = {
     MdtColors.YELLOW_BLACK: (curses.COLOR_YELLOW, curses.COLOR_BLACK),
 }
 
-DEFAULT_CURSE_COLOR = MdtColors.WHITE_BLACK
+DEFAULT_CURSE_COLOR = MdtColors.WHITE_BLACK.value
 BASH_TERM_RESET_COLOR = "\033[00;39;49m"
 
 MDT_PARSE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -60,15 +60,15 @@ def build_match_config(config: dict) -> list[ConfigEntry]:
             pattern = match_entry[0]
 
         # Reset the color by default
-        terminal_color_code = BASH_COLOR_MAP["reset"]
-        curses_color_code = CONFIG_COLOR_MAP["reset"]
+        terminal_color_code = BASH_COLOR_MAP[MdtColors.WHITE_BLACK]
+        curses_color_code = MdtColors.WHITE_BLACK.value
 
         # Check if we have a valid color entry for this match
         if match_entry[1] != "":
             if match_entry[1] in BASH_COLOR_MAP:
-                terminal_color_code = BASH_COLOR_MAP[match_entry[1]]
+                terminal_color_code = CONFIG_COLOR_MAP[match_entry[1]].value
             if match_entry[1] in CONFIG_COLOR_MAP:
-                curses_color_code = CONFIG_COLOR_MAP[match_entry[1]]
+                curses_color_code = CONFIG_COLOR_MAP[match_entry[1]].value
 
         match_config_list.append(
             ConfigEntry(pattern, terminal_color_code, curses_color_code, match_entry[2])
