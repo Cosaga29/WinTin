@@ -31,7 +31,7 @@ EXIT_TOKENS = (
     "exits ",
     "an exit ",
     "a hard to see through exit ",
-    "limit of your",
+    "the limit of your",
 )
 
 

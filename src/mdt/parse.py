@@ -52,77 +52,81 @@ def transform_tintin_array(tt_array: str) -> str:
     return mdt_line[previous_punctuation+1:end_punctuation]
 
 
-def tokenize(line: str) -> list[str]:
-    #def matcher(match: re.Match):
-    #    if match.groups()[0] in NUMBER_MAP:
-    #        return NUMBER_MAP[match.groups()[0]]
-    #    return match.groups()[0]
+def get_room_directions(dir_token_string: str):
+    quantified_directions = []
+    room_directions = dir_token_string.split(" and ")
 
+    for dir in room_directions:
+        space = dir.find(" ")
+        dir_count_token = dir[:space]
+        dir_token = dir[space+1:]
+
+        if dir_count_token in NUMBER_MAP:
+            dir_number = NUMBER_MAP[dir_count_token]
+
+        if dir_token in DIRECTION_MAP:
+            dir_token = DIRECTION_MAP[dir_token]
+
+        # The room where these NPCs are
+        quantified_directions.append((dir_number, dir_token))
+
+    return tuple(quantified_directions)
+
+
+def add_entities_to_room(entity_token_string: str, entity_stack: list[tuple[int, str]], mdt_data: dict[tuple, list], direction_tuple: tuple):
+    mdt_data[direction_tuple] = []
+
+    # a drunk philosopher and Ulive
+    # an adorable slave, a grey and blue rat and a grinning young man and two strong men and a blue and purple man
+    entity_token_string = entity_token_string.split(" and ")
+    for entity in entity_token_string:
+        first_word_idx = entity.find(" ")
+        first_word = entity[:first_word_idx]
+        if first_word in NUMBER_MAP:
+            mdt_data[direction_tuple].append([NUMBER_MAP[first_word], entity])
+        else:
+            mdt_data[direction_tuple][-1][1] += f" {entity}"
+
+    # Convert to tuple
+    mdt_data[direction_tuple] = [tuple(x) for x in mdt_data[direction_tuple]]
+    mdt_data[direction_tuple].extend(entity_stack)
+
+
+def tokenize(line: str) -> list[str]:
     line = line.lower()
     line = line.replace("are", "is")
     lines = line.split(", ")
-    no_exit_lines = list(filter(lambda x: not x.startswith(EXIT_TOKENS), lines))
-    room_entities = []
-    directions = []
-    rooms = {}
-    for token in no_exit_lines:
-        fragments = token.split(" is ")
-        if len(fragments) >= 2:
-            room_entities.append(fragments[0])
-            directions.append(fragments[1])
+    # Remove exist lines
+    lines = list(filter(lambda x: not x.startswith(EXIT_TOKENS), lines))
 
-    # Numerify entities
-    for i, entity_list_str in enumerate(room_entities):
-        token_stack = []
+    mdt_data = {}
+    entity_stack = []
+    for token in lines:
+        try:
+            # A cobbler is one west and one southwest 
+            fragments = token.split(" is ")
+            room_entities = fragments[0]
+            
+            if len(fragments) == 2:
+                room_directions = fragments[1]
+                room_directions = get_room_directions(room_directions)
+                add_entities_to_room(room_entities, entity_stack, mdt_data, room_directions)
+                entity_stack.clear()
+            else:
+                first_word_pos = room_entities.find(" ")
+                # One word, prob either a player or rogue direction
+                if first_word_pos == -1:
+                    continue
 
-        # Note that we have to split the 'and' context here because we could have
-        # 'entity and entity2' or 'blue and red entity'
-        matches = re.findall(r"and ([a-z]+)", entity_list_str)
+                first_word = room_entities[:first_word_pos]
+                # Check if the first word is a direction
+                if first_word in NUMBER_MAP:
+                    # We have a count
+                    entity_stack.append((NUMBER_MAP[first_word], room_entities))
+        except:
+            continue
 
-        if matches:
-            current_token_count = 0
-            current_entity_description = ""
-            for token in entity_list_str.split(" and "):
-                words = token.split(" ")
-                if words[0] in NUMBER_MAP:
-                    # Push our old token
-                    if current_token_count > 0:
-                        token_stack.append((current_token_count, current_entity_description))
-
-                    # New token!
-                    current_token_count = NUMBER_MAP[words[0]]
-                    current_entity_description = token
-                else:
-                    current_entity_description += f" {token}"
-        
-            token_stack.append((current_token_count, current_entity_description))
-        else:
-            words = entity_list_str.split(" ")
-            token_stack.append((NUMBER_MAP[words[0]], entity_list_str))
-
-        print('here')
-
-
-
-    print('here')
-
-    # TODO: Regex multiple per pass
-    line = line.replace("queued command: map door text", "")
-    line = line.replace(" black and white ", " black white ")
-    line = line.replace(" brown and white ", " brown white ")
-    line = line.replace("the limit of your vision is ", "the limit of your vision:")
-
-    t = r" and (.*) "
-    matches = re.findall(t, line)
-    for match in matches:
-        print(match)
-
-
-    line = re.sub(r"( and (.*) )|( and an )", ", a ", line)
-    #line = line.replace(" and ", ", ")
-    line = line.replace(" is ", ", ")
-
-    return line.split(", ")
+    return mdt_data
 
 
 def get_token_context(token: str) -> tuple[str | None, int | None, str, TokenType]:
