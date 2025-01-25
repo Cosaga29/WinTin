@@ -15,8 +15,6 @@
     #if {"$watchOutput" == "true"}
     {
         #list {buffer} {add} {%1};
-
-        #LINE {log} {logs/buffer.log} {$buffer};
         
         #regexp {%1} {%*from here.$}
         {

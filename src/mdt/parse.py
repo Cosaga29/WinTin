@@ -15,7 +15,11 @@ from config import (
     CURSES_COLOR_PAIR_MAP,
 )
 
-TINTIN_ARRAY_START = re.compile(r"({[0-9]})|({)")
+
+from test_data import T4, T5
+
+
+TINTIN_ARRAY_START = re.compile(r"({\d+})|(})|({)")
 TINTIN_ARRAY_END = re.compile(r"}")
 
 
@@ -32,7 +36,7 @@ def is_tintin_array(line: str) -> bool:
     return line[0] == "{" and line[2] == "}"
 
 
-def transform_tintin_array(mdt_line: str) -> str:
+def transform_tintin_array(tt_array: str) -> str:
     """Stringifys the tintin array to a normal string.
 
     Args:
@@ -41,17 +45,81 @@ def transform_tintin_array(mdt_line: str) -> str:
     Returns:
         str: The transformed string
     """
-    mdt_line = re.sub(TINTIN_ARRAY_START, "", mdt_line)
-    return re.sub(TINTIN_ARRAY_END, " ", mdt_line)
+    mdt_line = re.sub(TINTIN_ARRAY_START, " ", tt_array)
+    end_punctuation = tt_array.rfind(".")
+    previous_punctuation = max([0, tt_array.rfind(".", 0, end_punctuation), tt_array.rfind("!", 0, end_punctuation), tt_array.rfind("?", 0, end_punctuation)])
+
+    return mdt_line[previous_punctuation+1:end_punctuation]
 
 
 def tokenize(line: str) -> list[str]:
+    #def matcher(match: re.Match):
+    #    if match.groups()[0] in NUMBER_MAP:
+    #        return NUMBER_MAP[match.groups()[0]]
+    #    return match.groups()[0]
+
     line = line.lower()
-    line = line.replace(" are ", " is ")
+    line = line.replace("are", "is")
+    lines = line.split(", ")
+    no_exit_lines = list(filter(lambda x: not x.startswith(EXIT_TOKENS), lines))
+    room_entities = []
+    directions = []
+    rooms = {}
+    for token in no_exit_lines:
+        fragments = token.split(" is ")
+        if len(fragments) >= 2:
+            room_entities.append(fragments[0])
+            directions.append(fragments[1])
+
+    # Numerify entities
+    for i, entity_list_str in enumerate(room_entities):
+        token_stack = []
+
+        # Note that we have to split the 'and' context here because we could have
+        # 'entity and entity2' or 'blue and red entity'
+        matches = re.findall(r"and ([a-z]+)", entity_list_str)
+
+        if matches:
+            current_token_count = 0
+            current_entity_description = ""
+            for token in entity_list_str.split(" and "):
+                words = token.split(" ")
+                if words[0] in NUMBER_MAP:
+                    # Push our old token
+                    if current_token_count > 0:
+                        token_stack.append((current_token_count, current_entity_description))
+
+                    # New token!
+                    current_token_count = NUMBER_MAP[words[0]]
+                    current_entity_description = token
+                else:
+                    current_entity_description += f" {token}"
+        
+            token_stack.append((current_token_count, current_entity_description))
+        else:
+            words = entity_list_str.split(" ")
+            token_stack.append((NUMBER_MAP[words[0]], entity_list_str))
+
+        print('here')
+
+
+
+    print('here')
+
+    # TODO: Regex multiple per pass
+    line = line.replace("queued command: map door text", "")
     line = line.replace(" black and white ", " black white ")
     line = line.replace(" brown and white ", " brown white ")
     line = line.replace("the limit of your vision is ", "the limit of your vision:")
-    line = line.replace(" and ", ", ")
+
+    t = r" and (.*) "
+    matches = re.findall(t, line)
+    for match in matches:
+        print(match)
+
+
+    line = re.sub(r"( and (.*) )|( and an )", ", a ", line)
+    #line = line.replace(" and ", ", ")
     line = line.replace(" is ", ", ")
 
     return line.split(", ")
@@ -74,6 +142,9 @@ def get_token_context(token: str) -> tuple[str | None, int | None, str, TokenTyp
     entity = ""
 
     for sub_token in token.split(" "):
+        if not sub_token:
+            continue
+
         if sub_token in DIRECTION_MAP:
             direction = str(DIRECTION_MAP[sub_token])
             token_mentions_direction = True
@@ -209,6 +280,9 @@ def run_parser(lines: list[str]) -> list[str]:
     def add_room(
         subjects: list, directions: list, room_data: dict[tuple[int, str], RoomInfo]
     ):
+        if len(subjects) == 0 and len(directions) == 0:
+            return
+
         unique_dir_key = tuple(directions)
 
         if unique_dir_key not in room_data:
@@ -262,7 +336,8 @@ def watch_files(filename: str):
             # If the files modified time has changed, run the parser
             if new_time != last_update_time:
                 last_update_time = new_time
-                run_parser(f.readlines())
+                run_parser([T5])
+                #run_parser(f.readlines())
                 f.seek(0)
 
             time.sleep(0.2)
