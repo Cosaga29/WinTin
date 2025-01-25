@@ -366,5 +366,6 @@ if __name__ == '__main__':
     mdt = MapDoorText()
     mdt.parse_mdt(cleanLine(mdt_line))
 
+    mdt.return_value.reverse()
     for line in mdt.return_value:
         print(line)

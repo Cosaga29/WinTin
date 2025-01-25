@@ -43,7 +43,7 @@ if [ -n "$TMUX" ] || [ "$DISC_SESSION_CREATE" = "1" ]; then
     tmux send-keys './bin/mdt' 'C-m'
     tmux select-pane -t 1
     tmux resize-pane -U 7 
-    tmux resize-pane -R 10 
+    tmux resize-pane -R 15 
  
     fi
     
