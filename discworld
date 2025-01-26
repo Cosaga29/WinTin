@@ -1,6 +1,13 @@
 cd /home/alex/WinTin
 
-# See if we have discworld running
+# Check that we have a supported TMUX version
+tmux -V | grep 3.4
+if [[ $(echo $?) != 0 ]]; then
+    echo -e "Script only supports TMUX 3.4\n"
+    exit 1
+fi
+
+# Kill all prior sessions
 tmux ls | grep discworld
 if [[ $(echo $?) == 0 ]]; then
     tmux kill-session -t discworld
