@@ -65,7 +65,7 @@
     #IF {"$debug" == "1"} { #SHOWME %1 };
     #VAR {minimap} {%0};
     #REPLACE {minimap} {u001b} {};
-    #SYSTEM {rm logs/minimap.log && touch logs/minimap.log};
+    #SYSTEM {truncate -s 0 logs/minimap.log};
 
     #LINE {log} {logs/minimap.log} {$minimap};
     #SYSTEM {sed -i -e 's/^/     /' logs/minimap.log};
@@ -76,7 +76,7 @@
     #IF {"$debug" == "1"} { #SHOWME %1 };
     #VAR GMCP[room][mdt] {%0};
     #REPLACE {GMCP[room][mdt]} {\\n} {};
-    #SYSTEM {rm logs/mapdoortext.log && touch logs/mapdoortext.log};
+    #SYSTEM {truncate -s 0 logs/mapdoortext.log};
     #LINE {log} {logs/mapdoortext.log} {$GMCP[room][mdt]};
 }
 

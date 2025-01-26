@@ -47,7 +47,6 @@
 #READ {user/priestalias.tin};
 #READ {user/timers.tin};
 #READ {user/macros.tin};
-#READ {daemon/triggers.tin};
 
 #SESSION {discworld} {discworld.starturtle.net} {4242};
 
@@ -60,11 +59,10 @@
     {
         #regexp {%0} {^{n|e|s|w|ne|nw|se|sw}$}
         {
-            #showme regex match;
-            #system {rm $map_file && touch $map_file};
+            #system {truncate -s 0 $map_file};
             #line {log} {$map_file} {%0};
         }
     };
-}
+};
 
 #FORMAT {start_time} {%T};
