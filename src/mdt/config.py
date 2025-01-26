@@ -12,6 +12,7 @@ class MdtColors(Enum):
     CYAN_BLACK = 2
     RED_BLACK = 3
     YELLOW_BLACK = 4
+    GREEN = 5
 
 
 CONFIG_COLOR_MAP = {
@@ -34,6 +35,7 @@ CURSES_COLOR_PAIR_MAP = {
     MdtColors.CYAN_BLACK: (curses.COLOR_CYAN, curses.COLOR_BLACK),
     MdtColors.RED_BLACK: (curses.COLOR_RED, curses.COLOR_BLACK),
     MdtColors.YELLOW_BLACK: (curses.COLOR_YELLOW, curses.COLOR_BLACK),
+    MdtColors.GREEN: (curses.COLOR_GREEN, curses.COLOR_BLACK),
 }
 
 DEFAULT_CURSE_COLOR = MdtColors.WHITE_BLACK.value

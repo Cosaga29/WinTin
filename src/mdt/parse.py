@@ -23,6 +23,8 @@ from config import (
     MdtColors,
 )
 
+from test_data import PLAYER, WHY, ANOTHER
+
 
 logging.basicConfig(
     filename="crash.mdt.log",
@@ -72,6 +74,7 @@ def transform_tintin_array(tt_array: str) -> str:
 
     # Replace {101} with " "
     mdt_line = re.sub(r"}{\d+}{", " ", last_sentence)
+    mdt_line = re.sub(r"\d+}{", "", mdt_line)
 
     return mdt_line.lstrip().rstrip().lstrip("{").rstrip("}")
 
@@ -115,36 +118,33 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
         direction_tuple (tuple): The direction indexing this room
     """
     # an adorable slave, a grey and blue rat and a grinning young man and two strong men and a blue and purple man
+
+    # Parse until we hit a number
     entity_token_string = entity_token_string.split(" and ")
 
     for entity in entity_token_string:
-        # Transform "a blue man" -> (1, "a blue man")
-        first_word_idx = entity.find(" ")
-        if first_word_idx == -1:
-            # Named NPC probably
-            # 'a drunk philosopher and Ulive'
-            entity_stack.append(
-                EntityInfo(
-                    count=1,
-                    description=entity,
-                    curse_color_code=DEFAULT_CURSE_COLOR,
-                    score=DEFAULT_NPC_VALUE,
-                )
-            )
-            continue
+        count = None
+        e = EntityInfo()
 
-        first_word = entity[:first_word_idx]
-        if first_word in NUMBER_MAP:
-            entity_stack.append(
-                EntityInfo(
-                    count=NUMBER_MAP[first_word],
-                    description=entity,
-                    curse_color_code=DEFAULT_CURSE_COLOR,
-                    score=DEFAULT_NPC_VALUE,
-                )
-            )
+        # See if this entity has special codes associated with it
+        if entity.startswith("\x1b"):
+            # Check that the code matches a player coloring code
+            if s := re.search(r"\x1b.*\x1b\[\d+m(.*)\x1b.*\x1b", entity):
+                if len(s.groups()) > 0:
+                    e.count = 1
+                    e.description = s.groups()[0]
+                    e.curse_color_code = MdtColors.GREEN.value
         else:
-            entity_stack[-1].description += f" {entity}"
+            for word in entity.split(" "):
+                if word in NUMBER_MAP:
+                    count = NUMBER_MAP[word]
+                    e.count = count
+                    e.description += f"{word} "
+                else:
+                    e.description += f"{word} "
+
+            e.description = e.description.rstrip()
+        entity_stack.append(e)
 
 
 def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
@@ -165,6 +165,11 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
     # 'two hops are southeast' is logically equivalent to 'two hops is southeast', just bad english
     line = line.replace("are", "is")
     line = line.replace("and the limit of your vision", ", the limit of your vision")
+
+    # Remove player tokens
+    #line = line.replace("\x1b[1m\x1b[36m", "")
+    #line = line.replace("\x1b[39;49m\x1b[0m", "")
+    #"\x1b[1m\x1b[32mstormrider utous fury\x1b[39;49m\x1b[0m"
 
     # Commas are the main tokens that can be used to identify room elements
     lines = line.split(", ")
@@ -240,13 +245,27 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                 if word_idx == -1:
                     current_token_idk += 1
                     continue
-
                 word = room_entities[:word_idx]
+
+                # Follow on directions are handled above
+                if word in DIRECTION_MAP:
+                    current_token_idk += 1
+                    continue
+
                 # In this context, a fragment of 1 implies that there is an entity
                 # Otherwise we would have parsed the direction from the above block
                 # i.e. "a shy girl", "a small boy", "a hoplite and a rat", "is" ....
                 # Add the entity to the stack and associate it with the directions once we reach it
                 if word in NUMBER_MAP:
+                    # Check second word to make sure this isn't a direction
+                    second_word_idx = room_entities.find(" ", word_idx+1)
+                    if second_word_idx != -1:
+                        second_word = room_entities[word_idx+1:second_word_idx]
+                        if second_word in DIRECTION_MAP and len(entity_stack) == 0:
+                            # This is a direction that doesn't refer to a previous entity. Skip.
+                            current_token_idk += 1
+                            continue
+
                     # It's an entity
                     entity_stack.append(
                         EntityInfo(
@@ -256,6 +275,9 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                             score=DEFAULT_NPC_VALUE,
                         )
                     )
+                else:
+                    # It could be a named entity or a player
+                    push_entities(room_entities, entity_stack)
 
             current_token_idk += 1
         except:
@@ -424,8 +446,8 @@ def watch_files(filename: str):
             # If the files modified time has changed, run the parser
             if new_time != last_update_time:
                 last_update_time = new_time
-                #run_parser([BAD_DIR])
-                run_parser(f.readlines())
+                run_parser([ANOTHER])
+                #run_parser(f.readlines())
                 f.seek(0)
 
             time.sleep(0.2)
@@ -447,6 +469,7 @@ if __name__ == "__main__":
         mdt_log_path = os.path.abspath(
             os.path.join(MDT_PARSE_DIR, "../../logs/mapdoortext.log")
         )
+
         watch_files(mdt_log_path)
     except Exception as e:
         _LOGGER.error(e)

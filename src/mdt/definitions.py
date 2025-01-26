@@ -13,10 +13,10 @@ class ConfigEntry(NamedTuple):
 
 @dataclass
 class EntityInfo:
-    count: int
-    description: str
-    curse_color_code: int
-    score: int
+    count: int = 0
+    description: str = ""
+    curse_color_code: int = 1
+    score: int = 0
 
 
 @dataclass
