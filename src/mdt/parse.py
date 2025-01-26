@@ -446,8 +446,8 @@ def watch_files(filename: str):
             # If the files modified time has changed, run the parser
             if new_time != last_update_time:
                 last_update_time = new_time
-                run_parser([ANOTHER])
-                #run_parser(f.readlines())
+                #run_parser([ANOTHER])
+                run_parser(f.readlines())
                 f.seek(0)
 
             time.sleep(0.2)
