@@ -188,7 +188,7 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                 add_entities_to_stack(room_entities, entity_stack)
 
                 # Before we add the room, check to see if the we have follow on directions
-                # 'a handsome hoplite and a fearless hoplite is two east'
+                # 'a handsome hoplite and a fearless hoplite is two east', 'one west'
                 while current_token_idk + 1 < len(lines):
                     direction_string = False
 
@@ -197,7 +197,6 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
 
                     # The only case we care about is rogue directions
                     if len(fragments) == 1:
-
                         # one south and two west
                         fragments = lines[current_token_idk+1].split(" and ")
                         for frag in fragments:
@@ -224,19 +223,20 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                 entity_stack.clear()
                 direction_stack.clear()
             else:
-                words = room_entities.split(" ")
-                if len(words) == 0:
+                word_idx = room_entities.find(" ")
+                word = room_entities[:word_idx]
+                if word_idx == -1:
                     continue
 
                 # In this context, a fragment of 1 implies that there is an entity
                 # Otherwise we would have parsed the direction from the above block
                 # i.e. "a shy girl", "a small boy", "a hoplite and a rat", "is" ....
                 # Add the entity to the stack and associate it with the directions once we reach it
-                if words[0] in NUMBER_MAP:
+                if word in NUMBER_MAP:
                     # It's an entity
                     entity_stack.append(
                         EntityInfo(
-                            count=NUMBER_MAP[words[0]],
+                            count=NUMBER_MAP[word],
                             description=room_entities,
                             curse_color_code=DEFAULT_CURSE_COLOR,
                             score=DEFAULT_NPC_VALUE,
