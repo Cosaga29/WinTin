@@ -16,11 +16,17 @@ from definitions import (
 from config import (
     USER_MATCHES,
     MDT_PARSE_DIR,
-    DEFAULT_CURSE_COLOR,
     MIN_ROOM_VALUE,
     DEFAULT_NPC_VALUE,
     CURSES_COLOR_PAIR_MAP,
     MdtColors,
+)
+
+from patterns import (
+    TINTIN_ARRAY_BEGIN,
+    TINTIN_ARRAY_BETWEEN,
+    MDT_COMMAND_QUEUE,
+    PLAYER_COLOR,
 )
 
 
@@ -30,10 +36,6 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s %(message)s",
 )
 _LOGGER = logging.getLogger(__name__)
-
-
-TINTIN_ARRAY_START = re.compile(r"({\d+})|(})|({)")
-TINTIN_ARRAY_END = re.compile(r"}")
 
 
 def is_tintin_array(line: str) -> bool:
@@ -71,8 +73,13 @@ def transform_tintin_array(tt_array: str) -> str:
     last_sentence = tt_array[previous_punctuation + 1 : end_punctuation]
 
     # Replace {101} with " "
-    mdt_line = re.sub(r"}{\d+}{", " ", last_sentence)
-    mdt_line = re.sub(r"\d+}{", "", mdt_line)
+    mdt_line = re.sub(TINTIN_ARRAY_BETWEEN, " ", last_sentence)
+    mdt_line = re.sub(TINTIN_ARRAY_BEGIN, "", mdt_line)
+
+    # TODO: If this isn't good enough to catch all data that could potentialy
+    # arrive between map door text and the output file being written, we'll
+    # have to make the above regex a bit smarter
+    mdt_line = re.sub(MDT_COMMAND_QUEUE, "", mdt_line, count=1)
 
     return mdt_line.lstrip().rstrip().lstrip("{").rstrip("}")
 
@@ -127,7 +134,7 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
         # See if this entity has special codes associated with it
         if entity.startswith("\x1b"):
             # Check that the code matches a player coloring code
-            if s := re.search(r"\x1b.*\x1b\[\d+m(.*)\x1b.*\x1b", entity):
+            if s := re.search(PLAYER_COLOR, entity):
                 if len(s.groups()) > 0:
                     e.count = 1
                     e.description = s.groups()[0]
@@ -207,8 +214,14 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
 
                     # The only case we care about is rogue directions
                     if len(fragments) == 1:
+
                         # one south and two west
                         fragments = lines[current_token_idk + 1].split(" and ")
+
+                        # northeast and south of one west - line doesnt start with a count so not
+                        # a valid direction reference for the current entity stack
+                        if len(fragments) > 0 and fragments[0] in DIRECTION_MAP:
+                            break
 
                         # ["one south", "two west"]
                         for frag in fragments:
@@ -400,7 +413,8 @@ def apply_match_configs(
     filtered_rooms = {k: v for k, v in room_data.items() if v.score >= MIN_ROOM_VALUE}
 
     # TODO: Sort rooms right above this line to optimize how many NPC lists we need to sort
-    map(lambda x: x.entities.sort(key=lambda x: x.score), filtered_rooms.values())
+    for info in filtered_rooms.values():
+        info.entities.sort(key=lambda x: x.score, reverse=True)
 
     return filtered_rooms
 
@@ -432,7 +446,6 @@ def watch_files(filename: str):
             # If the files modified time has changed, run the parser
             if new_time != last_update_time:
                 last_update_time = new_time
-                # run_parser([ANOTHER])
                 run_parser(f.readlines())
                 f.seek(0)
 

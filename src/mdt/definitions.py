@@ -22,7 +22,6 @@ class EntityInfo:
 @dataclass
 class RoomInfo:
     score: int = 0
-    directions: list[tuple[int, str]] = field(default_factory=list)
     entities: list[EntityInfo] = field(default_factory=list)
 
 
