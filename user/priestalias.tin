@@ -1,0 +1,129 @@
+#alias {ac %1}
+{
+    attach %1 to bracelets;
+};
+
+#alias {aeg %1}
+{
+    perform holy aegis on %1;
+};
+
+#alias {dc}
+{
+    decompose corpses;
+};
+
+#alias {ddc %1}
+{
+    decompose %1 corpses;
+};
+
+#alias {dfs}
+{
+    drop fluffs;
+};
+
+#alias {dh %1}
+{
+    remove %1 from bracelets;
+    perform divine hand on %1;
+    roll in fluff;
+    attach %1 to bracelets;
+};
+
+#alias {dhf %1}
+{
+    get %1 from component pouch;
+    perform divine hand on %1;
+    roll in fluff;
+    put %1 in component pouch;
+};
+
+#alias {fs %1}
+{
+    perform far sight on %1;
+};
+
+#alias {db}
+{
+    get beads from pack;
+    hold beads;
+};
+
+#alias {heal %1}
+{
+    perform cure light wounds on %1;
+};
+
+#alias {healm %1}
+{
+    perform cure medium wounds on %1;
+};
+
+#alias {hf}
+{
+    hold fangs;  
+};
+
+#alias {icib}
+{
+    identify charms in bracelets;
+};
+
+#alias {light}
+{
+    perform light on me;
+};
+
+#alias {maj %1}
+{
+    perform major shield on %1;
+};
+
+#alias {med}
+{
+    meditate upon my divine protection;
+};
+
+#alias {phsac}
+{
+    get sacbat from pack;
+    hold sacbat;
+    perform holy sacrifice from sacbat;
+    put sacbat in pack;
+};
+
+#alias {psb}
+{
+    perform security blanket;
+};
+
+#alias {rc %1}
+{
+    remove %1 from bracelets;
+};
+
+#alias {rp %1}
+{
+    perform remember place on %1;
+};
+
+#alias {tot}
+{
+    perform summon fluff;
+    perform totem on fluff;
+};
+
+#alias {stasis %1}
+{
+    perform stasis on %1;
+};
+
+#alias {charge %1}
+{
+    get %1 from pack;
+    hold %1;
+    pray;
+    put %1 in pack;
+    hold fangs;
+};
