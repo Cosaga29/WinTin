@@ -47,7 +47,6 @@
 #READ {user/priestalias.tin};
 #READ {user/timers.tin};
 #READ {user/macros.tin};
-#READ {daemon/triggers.tin};
 
 #SESSION {discworld} {discworld.starturtle.net} {4242};
 
