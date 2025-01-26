@@ -1,6 +1,8 @@
 #VARIABLE watchOutput {false};
 #VARIABLE lastLine {};
 #VARIABLE buffer {};
+#VARIABLE bufferSize {};
+#VARIABLE maxBufferSize {500};
 #list buffer {clear};
 
 #nop Set this to be what the input command that fires 'map door text';
@@ -25,5 +27,11 @@
             #list {buffer} {clear};
             #VARIABLE watchOutput {false};
         };
+
+        #nop Cap the buffer size so that it doesn't grow to be too big
+        #list {var} {size} bufferSize
+        #if {$bufferSize > $maxBufferSize} {
+            #list {buffer} {clear};
+        }
     }
 };

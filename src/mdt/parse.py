@@ -20,10 +20,9 @@ from config import (
     MIN_ROOM_VALUE,
     DEFAULT_NPC_VALUE,
     CURSES_COLOR_PAIR_MAP,
+    MdtColors,
 )
 
-
-from test_data import TEST_LONG_LINE, TEST_HOP
 
 logging.basicConfig(
     filename="crash.mdt.log",
@@ -54,13 +53,11 @@ def transform_tintin_array(tt_array: str) -> str:
     """Stringifys the tintin array to a normal string.
 
     Args:
-        mdt_line (str): The tintin array string
+        tt_array (str): The tintin array string
 
     Returns:
         str: The transformed string
     """
-    mdt_line = re.sub(r"}{\d+}{", " ", tt_array)
-    mdt_line = re.sub(TINTIN_ARRAY_START, " ", tt_array)
     end_punctuation = tt_array.rfind(".")
     previous_punctuation = max(
         [
@@ -71,14 +68,22 @@ def transform_tintin_array(tt_array: str) -> str:
         ]
     )
 
-    return mdt_line[previous_punctuation + 1 : end_punctuation].lstrip().rstrip()
+    last_sentence = tt_array[previous_punctuation + 1 : end_punctuation]
+
+    # Replace {101} with " "
+    mdt_line = re.sub(r"}{\d+}{", " ", last_sentence)
+
+    return mdt_line.lstrip().rstrip().lstrip("{").rstrip("}")
 
 
-def get_room_directions(dir_token_string: str) -> list:
-    quantified_directions = []
+def push_directions(dir_token_string: str, directions: list[tuple[int, str]]) -> list:
+    is_last_dir = False
 
     # Handles the 1 west, 1 south and 1 east case
     # Note that 'and' is not a descriptor for direction, so this is safe to do unlike for entities
+    if "and" in dir_token_string:
+        is_last_dir = True
+
     dir_token_string = dir_token_string.replace(" and ", ", ")
     room_directions = dir_token_string.split(", ")
 
@@ -94,15 +99,12 @@ def get_room_directions(dir_token_string: str) -> list:
             dir_token = DIRECTION_MAP[dir_token]
 
         # The room where these NPCs are
-        quantified_directions.append((dir_number, dir_token))
+        directions.append((dir_number, dir_token))
 
-    return quantified_directions
+    return is_last_dir
 
 
-def add_entities_to_stack(
-    entity_token_string: str,
-    entity_stack: list[EntityInfo]
-):
+def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
     """Method that adds the entity token string to the MDT room data using the entities that
     have not been associated.
 
@@ -112,13 +114,25 @@ def add_entities_to_stack(
         mdt_data (dict[tuple, RoomInfo]): The map door text master list
         direction_tuple (tuple): The direction indexing this room
     """
-    # a drunk philosopher and Ulive
     # an adorable slave, a grey and blue rat and a grinning young man and two strong men and a blue and purple man
     entity_token_string = entity_token_string.split(" and ")
 
     for entity in entity_token_string:
         # Transform "a blue man" -> (1, "a blue man")
         first_word_idx = entity.find(" ")
+        if first_word_idx == -1:
+            # Named NPC probably
+            # 'a drunk philosopher and Ulive'
+            entity_stack.append(
+                EntityInfo(
+                    count=1,
+                    description=entity,
+                    curse_color_code=DEFAULT_CURSE_COLOR,
+                    score=DEFAULT_NPC_VALUE,
+                )
+            )
+            continue
+
         first_word = entity[:first_word_idx]
         if first_word in NUMBER_MAP:
             entity_stack.append(
@@ -130,9 +144,7 @@ def add_entities_to_stack(
                 )
             )
         else:
-            # 'and' was used as a description i.e. "blue and red man", readd the description
-            entity_stack[-1][1] += f" {entity}"
-
+            entity_stack[-1].description += f" {entity}"
 
 
 def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
@@ -144,7 +156,7 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
         line (str): The entity MDT list
 
     Returns:
-        list[str]: The 
+        list[str]: The
     """
     # Convert everything to lowercase for matching purposes
     line = line.lower()
@@ -152,6 +164,7 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
     # Helps with tokenizing entities and directions
     # 'two hops are southeast' is logically equivalent to 'two hops is southeast', just bad english
     line = line.replace("are", "is")
+    line = line.replace("and the limit of your vision", ", the limit of your vision")
 
     # Commas are the main tokens that can be used to identify room elements
     lines = line.split(", ")
@@ -170,7 +183,7 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
     current_token_idk = 0
     while current_token_idk < len(lines):
         try:
-            line = lines[current_token_idk]
+            line = lines[current_token_idk].rstrip().lstrip()
 
             # Separates the entities and their respective rooms
             # A cobbler is one west and one southwest
@@ -182,23 +195,23 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                 room_directions = fragments[1]
 
                 # Calculate the room directions using the room description
-                direction_stack.extend(get_room_directions(room_directions))
+                is_last_dir = push_directions(room_directions, direction_stack)
 
                 # Add the so-far parsed entities
-                add_entities_to_stack(room_entities, entity_stack)
+                push_entities(room_entities, entity_stack)
 
                 # Before we add the room, check to see if the we have follow on directions
                 # 'a handsome hoplite and a fearless hoplite is two east', 'one west'
-                while current_token_idk + 1 < len(lines):
+                while not is_last_dir and current_token_idk + 1 < len(lines):
                     direction_string = False
 
                     # Similar to above, check to see if we have direction information in this line
-                    fragments = lines[current_token_idk+1].split(" is ")
+                    fragments = lines[current_token_idk + 1].split(" is ")
 
                     # The only case we care about is rogue directions
                     if len(fragments) == 1:
                         # one south and two west
-                        fragments = lines[current_token_idk+1].split(" and ")
+                        fragments = lines[current_token_idk + 1].split(" and ")
                         for frag in fragments:
                             words = frag.split(" ")
                             if len(words) >= 2:
@@ -207,7 +220,7 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                                     # Flag this as a parsed direction string so we can skip the line on the next iteration
                                     direction_string = True
                                     # This should be associated with the room directions
-                                    direction_stack.extend(get_room_directions(frag))
+                                    push_directions(frag, direction_stack)
 
                         if direction_string:
                             current_token_idk += 1
@@ -216,7 +229,7 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                             break
                     else:
                         break
-                
+
                 # At this point we are confirmed done with parsing associated directions for this room
                 mdt_data[tuple(direction_stack)] = RoomInfo()
                 mdt_data[tuple(direction_stack)].entities.extend(entity_stack)
@@ -224,10 +237,11 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                 direction_stack.clear()
             else:
                 word_idx = room_entities.find(" ")
-                word = room_entities[:word_idx]
                 if word_idx == -1:
+                    current_token_idk += 1
                     continue
 
+                word = room_entities[:word_idx]
                 # In this context, a fragment of 1 implies that there is an entity
                 # Otherwise we would have parsed the direction from the above block
                 # i.e. "a shy girl", "a small boy", "a hoplite and a rat", "is" ....
@@ -256,11 +270,13 @@ def write_rooms(room_data: dict[tuple[int, str], RoomInfo]):
     Args:
         room_data (dict[tuple[int, str], RoomInfo]): The room data to write
     """
+    stdscr.clear()
     y = 0
     x = 0
 
     if len(room_data) == 0:
         stdscr.addstr(y, x, "Nothing seen!")
+        stdscr.refresh()
         return
 
     def calc_longest_room_dir_length(room_data: dict):
@@ -269,11 +285,11 @@ def write_rooms(room_data: dict[tuple[int, str], RoomInfo]):
             dir_str = ""
             # 1 s, 2 sw
             for dir in room_dir:
-                dir_str += f"{dir[0]} {dir[1]}, "
+                dir_str += f"{dir[0]} {dir[1]},"
 
             longest_dir = max(longest_dir, len(dir_str))
 
-        return longest_dir - 1
+        return longest_dir
 
     max_y, max_x = stdscr.getmaxyx()
 
@@ -305,18 +321,25 @@ def write_rooms(room_data: dict[tuple[int, str], RoomInfo]):
         x = score_pos_offset
 
         if x + len(room_score_str) < max_x:
-            stdscr.addstr(y, x, room_score_str)
+            # Add the [score]
+            stdscr.addstr(
+                y, x, room_score_str, curses.color_pair(MdtColors.CYAN_BLACK.value)
+            )
             x += len(room_score_str)
         else:
             break
 
         for i, entity in enumerate(room_info.entities):
             entity_str = (
-                f"{entity.description}" if i == len(room_info.entities) - 1 else f"{entity.description}, "
+                f"{entity.description}"
+                if i == len(room_info.entities) - 1
+                else f"{entity.description}, "
             )
 
             if x + len(entity_str) < max_x:
-                stdscr.addstr(y, x, entity_str, curses.color_pair(entity.curse_color_code))
+                stdscr.addstr(
+                    y, x, entity_str, curses.color_pair(entity.curse_color_code)
+                )
                 x += len(entity_str)
             else:
                 break
@@ -348,7 +371,10 @@ def apply_match_configs(
 
             for match in USER_MATCHES:
                 # If pattern is a string, just search in string
-                if (isinstance(match.pattern, str) and match.pattern in entity.description) or (
+                if (
+                    isinstance(match.pattern, str)
+                    and match.pattern in entity.description
+                ) or (
                     isinstance(match.pattern, re.Pattern)
                     and match.pattern.match(entity.description)
                 ):
@@ -364,6 +390,8 @@ def apply_match_configs(
 
     # Filter Rooms that are below min score
     filtered_rooms = {k: v for k, v in room_data.items() if v.score >= MIN_ROOM_VALUE}
+
+    # TODO: Sort rooms right above this line to optimize how many NPC lists we need to sort
     map(lambda x: x.entities.sort(key=lambda x: x.score), filtered_rooms.values())
 
     return filtered_rooms
@@ -371,15 +399,19 @@ def apply_match_configs(
 
 def run_parser(lines: list[str]) -> list[str]:
     # The output from tt++ is always a single line
-    mdt_line = lines[0]
-    if is_tintin_array(mdt_line):
-        # Parses the last element of the tintin array output as the
-        # manual map door text line
-        mdt_line = transform_tintin_array(mdt_line)
+    try:
+        mdt_line = lines[0]
+        if is_tintin_array(mdt_line):
+            # Parses the last element of the tintin array output as the
+            # manual map door text line
+            mdt_line = transform_tintin_array(mdt_line)
 
-    mdt_data = calculate_mdt(mdt_line)
-    room_data = apply_match_configs(mdt_data)
-    write_rooms(room_data)
+        mdt_data = calculate_mdt(mdt_line)
+        room_data = apply_match_configs(mdt_data)
+        write_rooms(room_data)
+    except Exception as e:
+        _LOGGER.error(e)
+        write_rooms({})
 
 
 def watch_files(filename: str):
@@ -392,7 +424,7 @@ def watch_files(filename: str):
             # If the files modified time has changed, run the parser
             if new_time != last_update_time:
                 last_update_time = new_time
-                #run_parser([TEST_HOP])
+                #run_parser([BAD_DIR])
                 run_parser(f.readlines())
                 f.seek(0)
 
