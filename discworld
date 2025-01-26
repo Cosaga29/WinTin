@@ -1,4 +1,4 @@
-cd /home/alex/WinTin
+cd ~/ware/WinTin
 
 # No existing discworld session? Then create one
 if [[ ! $(tmux ls -F '#S') =~ discworld ]]; then
@@ -39,15 +39,16 @@ if [ -n "$TMUX" ] || [ "$DISC_SESSION_CREATE" = "1" ]; then
 
     # Cut back to main window, vertical split for mapdoortext
     tmux select-pane -t 0
-    tmux split-window -v -b -l 5 
+    tmux split-window -v -b -l 15
     tmux send-keys './bin/mdt' 'C-m'
     tmux select-pane -t 1
+
+    tmux send-keys './run.sh -r' Enter
     
-fi
+    fi
     
 if [ -z "$TMUX" ]; then
     echo "Not already in TMUX, so let's attach"
     # If we aren't already inside of TMUX, then attach to our session
     tmux -2 attach-session -t discworld -d
 fi
-

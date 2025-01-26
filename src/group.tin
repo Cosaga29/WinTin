@@ -263,7 +263,7 @@
 };
 
 #ALIAS {/writegroupshieldstofile} {
-    #system {truncate -s 0 $groupshield_file};
+    #system {rm $groupshield_file && touch $groupshield_file};
 
     #line {log} {$groupshield_file} {.:: Group Shields ::. \n\r};
     #foreach {$group_shields[]} {name} {

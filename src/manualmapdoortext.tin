@@ -1,8 +1,6 @@
 #VARIABLE watchOutput {false};
 #VARIABLE lastLine {};
 #VARIABLE buffer {};
-#VARIABLE bufferSize {};
-#VARIABLE maxBufferSize {500};
 #list buffer {clear};
 
 #nop Set this to be what the input command that fires 'map door text';
@@ -17,21 +15,17 @@
     #if {"$watchOutput" == "true"}
     {
         #list {buffer} {add} {%1};
+
+        #LINE {log} {logs/buffer.log} {$buffer};
         
         #regexp {%1} {%*from here.$}
         {
             #nop On a successful match: stop watching the output and reset the buffer;
-            #SYSTEM {truncate -s 0 logs/mapdoortext.log};
+            #SYSTEM {rm logs/mapdoortext.log && touch logs/mapdoortext.log};
 
             #LINE {log} {logs/mapdoortext.log} {$buffer};
             #list {buffer} {clear};
             #VARIABLE watchOutput {false};
         };
-
-        #nop Cap the buffer size so that it doesn't grow to be too big
-        #list {var} {size} bufferSize
-        #if {$bufferSize > $maxBufferSize} {
-            #list {buffer} {clear};
-        }
     }
 };

@@ -3,7 +3,6 @@
 import sys
 import sqlite3
 
-
 class MapRoute:
     def __init__(self):
         self.locations_by_room_id = {}
@@ -17,48 +16,37 @@ class MapRoute:
         self.load_exits()
 
     def database_connect(self):
-        con = sqlite3.connect("src/quow.db")
+        con = sqlite3.connect('src/quow.db')
         con.row_factory = sqlite3.Row
         return con
 
     def load_locations(self):
         cur = self.db.cursor()
-        cur.execute(
-            "SELECT room_id, map_id, xpos, ypos, room_short, room_type FROM rooms"
-        )
+        cur.execute("SELECT room_id, map_id, xpos, ypos, room_short, room_type FROM rooms")
         for row in cur.fetchall():
             self.locations_by_room_id[row[0]] = [row[1], row[2], row[3], row[4], row[5]]
-            self.exits_by_id[row["room_id"]] = {}
-            self.exits_by_exit[row["room_id"]] = {}
+            self.exits_by_id[row['room_id']] = {}
+            self.exits_by_exit[row['room_id']] = {}
 
     def load_exits(self):
         cur = self.db.cursor()
         cur.execute("SELECT room_id, connect_id, exit FROM room_exits")
         for row in cur.fetchall():
-            if (
-                self.exits_by_id.get(row["room_id"]) is not None
-                and self.exits_by_id.get(row["connect_id"]) is not None
-            ):
-                self.exits_by_id[row["room_id"]][row["connect_id"]] = row["exit"]
-                self.exits_by_exit[row["room_id"]][row["exit"]] = row["connect_id"]
+            if self.exits_by_id.get(row['room_id']) is not None and self.exits_by_id.get(row['connect_id']) is not None:
+                self.exits_by_id[row['room_id']][row['connect_id']] = row['exit']
+                self.exits_by_exit[row['room_id']][row['exit']]  = row['connect_id']
 
     def route_to_room(self, current_id, target_id, same_place):
         # If we can't match one of the room identifiers, back out
-        if (
-            not current_id
-            or not target_id
-            or not self.locations_by_room_id.get(target_id)
-            or not self.locations_by_room_id.get(current_id)
-        ):
+        if not current_id or not target_id or not self.locations_by_room_id.get(target_id) or not self.locations_by_room_id.get(current_id):
             return
 
         sDoPath, sFinalDestination, iResults = self.route_find(
-            current_id,
-            target_id,
+            current_id, target_id, 
             self.locations_by_room_id[target_id][0],
             self.locations_by_room_id[target_id][1],
             self.locations_by_room_id[target_id][2],
-            same_place,
+            same_place
         )
 
         if sDoPath != "":
@@ -89,11 +77,7 @@ class MapRoute:
                 # Loop through all exits from this room
                 for sKey, sExitData in self.exits_by_id[sDoRoom[iN]].iteritems():
                     # Make sure we aren't looping back around on ourselves, and that we haven't already finished
-                    if (
-                        sKey != start_id
-                        and bEverDone.get(sKey) == None
-                        and iFinalRoom == 0
-                    ):
+                    if sKey != start_id and bEverDone.get(sKey) == None and iFinalRoom == 0:
                         iTotalRooms = iTotalRooms + 1
                         # Add THIS destination of THIS room to the "to-be-processed" list
                         sDoRoom.append(sKey)
@@ -102,10 +86,7 @@ class MapRoute:
                         # Record ID to room-num
                         sIDToRoomNum[sKey] = iTotalRooms
                         # Record back-tracking data
-                        iGotHereFrom[iTotalRooms] = [
-                            sIDToRoomNum[sDoRoom[iN]],
-                            sExitData,
-                        ]
+                        iGotHereFrom[iTotalRooms] = [sIDToRoomNum[sDoRoom[iN]], sExitData]
                         # See if we made it yet
                         if sDoRoom[iN] == dest_id:
                             bDone = True
@@ -113,18 +94,13 @@ class MapRoute:
                         elif sKey == dest_id:
                             bDone = True
                             iFinalRoom = iTotalRooms
-                        elif (
-                            same_place == True
-                            and self.locations_by_room_id[sDoRoom[iN]][0] == dest_map
-                            and self.locations_by_room_id[sDoRoom[iN]][1] == dest_x
-                            and self.locations_by_room_id[sDoRoom[iN]][2] == dest_y
-                        ):
+                        elif (same_place == True and self.locations_by_room_id[sDoRoom[iN]][0] == dest_map 
+                              and self.locations_by_room_id[sDoRoom[iN]][1] == dest_x 
+                              and self.locations_by_room_id[sDoRoom[iN]][2] == dest_y):
                             # Maybe we reached the co-ordinates instead - eg a house with multiple rooms in one pixels -- only stop here if we didn't START here
-                            if (
-                                self.locations_by_room_id[start_id][0] != dest_map
-                                or self.locations_by_room_id[start_id][1] != dest_x
-                                or self.locations_by_room_id[start_id][2] != dest_y
-                            ):
+                            if (self.locations_by_room_id[start_id][0] != dest_map or 
+                                    self.locations_by_room_id[start_id][1] != dest_x or 
+                                    self.locations_by_room_id[start_id][2] != dest_y):
                                 bDone = True
                                 iFinalRoom = iN
                         # elif
@@ -158,15 +134,15 @@ class MapRoute:
             for iN in xrange(len(sPath), 0, -1):
                 if sRealPath != "":
                     sRealPath = "{};".format(sRealPath)
-                sRealPath = "{}{}".format(sRealPath, sPath[iN - 1])
-            return sRealPath, sDoRoom[iFinalRoom - 1], len(sPath)
+                sRealPath = "{}{}".format(sRealPath, sPath[iN-1])
+            return sRealPath, sDoRoom[iFinalRoom-1], len(sPath)
         # Didn't find a route, return blanks
         return "", "", 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("[error] No input provided.")
+        print('[error] No input provided.')
         sys.exit()
 
     current_room, target_room = sys.argv.pop(1), sys.argv.pop(1)
