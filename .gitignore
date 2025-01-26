@@ -1,4 +1,5 @@
 *.log
 *__pycache__/
 user/
-
+.vscode/
+.venv/

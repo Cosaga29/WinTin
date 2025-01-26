@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 #VARIABLE {ENABLE_MAP_LOGGING} {0};
 
 #VARIABLE {map_file} {logs/map.log};
 #VARIABLE {chat_file} {logs/chat.log};
+=======
+#VARIABLE {ENABLE_MAP_LOGGING} {1};
+
+#VARIABLE {chat_file} {logs/chat.log}
+#VARIABLE {map_file} {logs/map.log};
+>>>>>>> fb736545d541cd1eb0f0deea6a1a535abb99c03a
 
 #CONFIG {SPEEDWALK} {OFF};
 #CONFIG {SPLIT};
@@ -45,6 +52,8 @@
 #READ {user/generalalias.tin};
 #READ {user/wizalias.tin};
 #READ {user/priestalias.tin};
+#READ {user/timers.tin};
+#READ {user/macros.tin};
 
 #SESSION {discworld} {discworld.starturtle.net} {4242};
 
