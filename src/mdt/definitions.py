@@ -12,19 +12,21 @@ class ConfigEntry(NamedTuple):
 
 
 @dataclass
+class EntityInfo:
+    count: int
+    description: str
+    curse_color_code: int
+    score: int
+
+
+@dataclass
 class RoomInfo:
     score: int = 0
-    entities: list[str] = field(default_factory=list)
-    colors: list[str] = field(default_factory=list)
+    directions: list[tuple[int, str]] = field(default_factory=list)
+    entities: list[EntityInfo] = field(default_factory=list)
 
 
-class TokenType(Enum):
-    ENTITY = 1
-    DIRECTION = 2
-    NONE = 3
-
-
-EXIT_TOKENS = (
+IGNORE_TOKENS = (
     "exit",
     "doors ",
     "a door ",
