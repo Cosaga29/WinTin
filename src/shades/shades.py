@@ -1,6 +1,7 @@
 import sys
 from mappings.shade_mappings import *
 
+
 def main():
     cur_node = int(sys.argv[1])
     direction = sys.argv[2]
