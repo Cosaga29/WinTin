@@ -23,8 +23,6 @@ from config import (
     MdtColors,
 )
 
-from test_data import PLAYER, WHY, ANOTHER
-
 
 logging.basicConfig(
     filename="crash.mdt.log",
@@ -79,7 +77,7 @@ def transform_tintin_array(tt_array: str) -> str:
     return mdt_line.lstrip().rstrip().lstrip("{").rstrip("}")
 
 
-def push_directions(dir_token_string: str, directions: list[tuple[int, str]]) -> list:
+def push_directions(dir_token_string: str, directions: list[tuple[int, str]]) -> bool:
     is_last_dir = False
 
     # Handles the 1 west, 1 south and 1 east case
@@ -114,17 +112,17 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
     Args:
         entity_token_string (str): The entity string
         entity_stack (list[EntityInfo]): The list of entities that we've seen so far
-        mdt_data (dict[tuple, RoomInfo]): The map door text master list
-        direction_tuple (tuple): The direction indexing this room
     """
     # an adorable slave, a grey and blue rat and a grinning young man and two strong men and a blue and purple man
 
-    # Parse until we hit a number
+    # Separate entities by 'and'
     entity_token_string = entity_token_string.split(" and ")
 
+    # General method is to parse through the entity string until we encounter a count
+    # each entity is associated with a count, unless it's a named
     for entity in entity_token_string:
-        count = None
         e = EntityInfo()
+        e.count = 1
 
         # See if this entity has special codes associated with it
         if entity.startswith("\x1b"):
@@ -137,8 +135,7 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
         else:
             for word in entity.split(" "):
                 if word in NUMBER_MAP:
-                    count = NUMBER_MAP[word]
-                    e.count = count
+                    e.count = NUMBER_MAP[word]
                     e.description += f"{word} "
                 else:
                     e.description += f"{word} "
@@ -165,11 +162,6 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
     # 'two hops are southeast' is logically equivalent to 'two hops is southeast', just bad english
     line = line.replace("are", "is")
     line = line.replace("and the limit of your vision", ", the limit of your vision")
-
-    # Remove player tokens
-    #line = line.replace("\x1b[1m\x1b[36m", "")
-    #line = line.replace("\x1b[39;49m\x1b[0m", "")
-    #"\x1b[1m\x1b[32mstormrider utous fury\x1b[39;49m\x1b[0m"
 
     # Commas are the main tokens that can be used to identify room elements
     lines = line.split(", ")
@@ -206,7 +198,7 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                 push_entities(room_entities, entity_stack)
 
                 # Before we add the room, check to see if the we have follow on directions
-                # 'a handsome hoplite and a fearless hoplite is two east', 'one west'
+                # 'a handsome hoplite and a fearless hoplite is two east', 'one west', 'and one southeast'
                 while not is_last_dir and current_token_idk + 1 < len(lines):
                     direction_string = False
 
@@ -217,12 +209,14 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                     if len(fragments) == 1:
                         # one south and two west
                         fragments = lines[current_token_idk + 1].split(" and ")
+
+                        # ["one south", "two west"]
                         for frag in fragments:
                             words = frag.split(" ")
                             if len(words) >= 2:
                                 # Ensure for each direction listed, we have a valid number and direction
                                 if words[0] in NUMBER_MAP and words[1] in DIRECTION_MAP:
-                                    # Flag this as a parsed direction string so we can skip the line on the next iteration
+                                    # Flag this line as a parsed direction string so we can skip the line on the next iteration
                                     direction_string = True
                                     # This should be associated with the room directions
                                     push_directions(frag, direction_stack)
@@ -233,6 +227,7 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                             # Otherwise it's an entity and we'll parse it on the next iteration
                             break
                     else:
+                        # Next line is the normal case (entity + direction, we'll handle it on the next iter)
                         break
 
                 # At this point we are confirmed done with parsing associated directions for this room
@@ -241,43 +236,34 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
                 entity_stack.clear()
                 direction_stack.clear()
             else:
+                # We need to see if this is a direction description or an entity description
                 word_idx = room_entities.find(" ")
                 if word_idx == -1:
                     current_token_idk += 1
                     continue
                 word = room_entities[:word_idx]
 
-                # Follow on directions are handled above
+                # Follow on directions are handled above, also they have no meaning since they don't
+                # have a count... Skip.
                 if word in DIRECTION_MAP:
                     current_token_idk += 1
                     continue
 
-                # In this context, a fragment of 1 implies that there is an entity
-                # Otherwise we would have parsed the direction from the above block
                 # i.e. "a shy girl", "a small boy", "a hoplite and a rat", "is" ....
                 # Add the entity to the stack and associate it with the directions once we reach it
                 if word in NUMBER_MAP:
                     # Check second word to make sure this isn't a direction
-                    second_word_idx = room_entities.find(" ", word_idx+1)
+                    second_word_idx = room_entities.find(" ", word_idx + 1)
                     if second_word_idx != -1:
-                        second_word = room_entities[word_idx+1:second_word_idx]
+                        second_word = room_entities[word_idx + 1 : second_word_idx]
+                        # If this is a direction and it doesn't have the context of a previously parsed entity...
+                        # Skip.
                         if second_word in DIRECTION_MAP and len(entity_stack) == 0:
-                            # This is a direction that doesn't refer to a previous entity. Skip.
                             current_token_idk += 1
                             continue
 
-                    # It's an entity
-                    entity_stack.append(
-                        EntityInfo(
-                            count=NUMBER_MAP[word],
-                            description=room_entities,
-                            curse_color_code=DEFAULT_CURSE_COLOR,
-                            score=DEFAULT_NPC_VALUE,
-                        )
-                    )
-                else:
-                    # It could be a named entity or a player
-                    push_entities(room_entities, entity_stack)
+                # Otherwise, this could be a named entity or a player
+                push_entities(room_entities, entity_stack)
 
             current_token_idk += 1
         except:
@@ -446,7 +432,7 @@ def watch_files(filename: str):
             # If the files modified time has changed, run the parser
             if new_time != last_update_time:
                 last_update_time = new_time
-                #run_parser([ANOTHER])
+                # run_parser([ANOTHER])
                 run_parser(f.readlines())
                 f.seek(0)
 
