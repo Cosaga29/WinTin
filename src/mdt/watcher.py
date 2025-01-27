@@ -18,7 +18,7 @@ from config import (
     MdtColors,
 )
 from tintin import transform_tintin_array, is_tintin_array
-from mdt.parser import MdtContextParser
+from parser import MdtContextParser
 
 logging.basicConfig(
     filename="crash.mdt.log",
