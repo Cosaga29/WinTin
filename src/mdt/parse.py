@@ -38,6 +38,32 @@ logging.basicConfig(
 _LOGGER = logging.getLogger(__name__)
 
 
+def filter_exits(lines: list[str]) -> list[str]:
+    num_lines = len(lines)
+    to_return = []
+    current_idx = 0
+    while current_idx < num_lines:
+        line = lines[current_idx]
+        if line.startswith(IGNORE_TOKENS):
+            follow_on_direction = True
+            # If line starts with any of these, remove it and any follow on directions...
+            while follow_on_direction and current_idx+1 < num_lines:
+                next_line = lines[current_idx+1]
+                words = next_line.split(" ")
+                if len(words) == 1 and words[0] in DIRECTION_MAP:
+                    current_idx += 1
+                elif len(words) >= 2 and words[0] in NUMBER_MAP and words[1] in DIRECTION_MAP:
+                    current_idx += 1
+                else:
+                    follow_on_direction = False
+        else:
+            to_return.append(line)
+        
+        current_idx += 1
+
+    return to_return
+
+
 def is_tintin_array(line: str) -> bool:
     """Determines if the line is a tt array. Arrays start with {1}
 
@@ -173,9 +199,8 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
     # Commas are the main tokens that can be used to identify room elements
     lines = line.split(", ")
 
-    # Remove lines that do not mention entities
-    lines = list(filter(lambda x: not x.startswith(IGNORE_TOKENS), lines))
-    lines = list(filter(lambda x: "from here" not in x, lines))
+    # Remove room entries that we don't care about (along with their directions!)
+    lines = filter_exits(lines)
 
     # Master MDT data struct that stores room information parsed from MDT text
     mdt_data: dict[tuple[tuple[int, str]], RoomInfo] = {}
