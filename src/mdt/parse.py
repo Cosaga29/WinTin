@@ -26,7 +26,7 @@ from patterns import (
     TINTIN_ARRAY_BEGIN,
     TINTIN_ARRAY_BETWEEN,
     MDT_COMMAND_QUEUE,
-    PLAYER_COLOR,
+    PLAYER_COLOR
 )
 
 

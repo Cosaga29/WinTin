@@ -1,0 +1,91 @@
+#alias {ba}
+{
+    bury corpses;
+};
+
+#alias {gb}
+{
+    bury corpses;
+    recover fifty-rhinus in every corpse&ten-rhinus in every corpse&rhinus in every corpse&half-rhinus in every corpse&quarter rhinus in every corpse&half-dollars in every corpse&dollars in every corpse&ten-dollars in every corpse&royals in every corpse&crowns in every corpse&thanras in every corpse&ras in every corpse&talents in every corpse&tooni in every corpse&drachmas in every corpse&staters in every corpse&decadrachmas in every corpse&minas in every corpse&tyrants in every corpse&ducats in every corpse&forins in every corpse&livres in every corpse&hedgehogs in every corpse&sovereigns in every corpse&tencrowns in every corpse&shillings in every corpse;
+};
+
+#alias {stb}
+{
+    stab opponent with weapon 1;
+    stab opponent with weapon 2;
+};
+
+#alias {a %1}
+{
+    attack %1;
+};
+
+#alias {cdelb}
+{
+    cast a on delbert;
+};
+
+#alias {chlak}
+{
+    cast a on hlakket;
+};
+
+#alias {cono}
+{
+    concentrate on opponent;
+};
+
+#alias {et}
+{
+    enter tent;
+};
+
+#alias {fei}
+{
+    feint at opponent with weapon;
+};
+
+#alias {feio %1}
+{
+   feint at %1 with weapon;
+};
+
+#alias {fneck} 
+{
+    options combat tactics focus = neck;
+};
+
+#alias {fnone}
+{
+    options combat tactics focus = none;
+};
+
+#alias {gfp %1}
+{
+    get %1 from pack;
+};
+
+#alias {h}
+{
+    health all;
+};
+
+#alias {ka}
+{
+    kill all except players&shopkeepers&cats&hags&bats&wizards&priests&priestesses&clouds&summons&pets&camels&monkeys&palms&trees&luggages&dragons&kang wu&shopkeepers&stallowners&cobblers&ryattenoki&fireflies&lights&tneduts&phos-phor&lap-lip&lip-phon&mihk&ptyler&ptarquet&pkara&hattian guards&goldenblossom&moths&fireflies&johnny&pennie&jeef&cuthbert&tfat&bessie&kang&Kyakenko&camel traders&bodyguards&wun gold star&shi do gai&ug&ipsor&goldenleaf&goldenblossom&chickens&nyne gold dragon&skeletons&swarms&fruitbats&fences&citadel guards&klepton&cadalessa&Himaclitus;
+};
+
+#alias {kal}
+{
+    kill all;
+};
+
+#alias {pe}
+{
+    peek opponent;
+};
+
+#alias {pip %1}
+{
+    put %1 in pack;
+};
