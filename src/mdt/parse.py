@@ -38,7 +38,7 @@ logging.basicConfig(
 _LOGGER = logging.getLogger(__name__)
 
 
-def filter_exits(lines: list[str]):
+def filter_exits(lines: list[str]) -> list[str]:
     num_lines = len(lines)
     to_return = []
     current_idx = 0
@@ -199,9 +199,9 @@ def calculate_mdt(line: str) -> dict[tuple[tuple[int, str]], RoomInfo]:
     # Commas are the main tokens that can be used to identify room elements
     lines = line.split(", ")
 
-    # Remove lines that do not mention entities
+    # Remove room entries that we don't care about (along with their directions!)
     lines = filter_exits(lines)
-    
+
     # Master MDT data struct that stores room information parsed from MDT text
     mdt_data: dict[tuple[tuple[int, str]], RoomInfo] = {}
 
