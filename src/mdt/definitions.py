@@ -91,3 +91,31 @@ DIRECTION_MAP = {
     "w": "w",
     "nw": "nw",
 }
+
+
+
+def get_next_entity_index(tokens: list[str], current_index: int, words: list[list[str]]):
+    for token_idx in range(current_index, len(token_idx)):
+        # Search through the tokens until we find a mention of something that's not a 
+        # direction and not a number
+        for i, word in enumerate(words[current_index]):
+            words_length = len(words[current_index])
+            if word in DIRECTION_MAP:
+                current_index += 1
+            if word in NUMBER_MAP:
+                if i+1 < words_length:
+                    if words[current_index][i+1] in DIRECTION_MAP:
+                        current_index += 1
+        
+
+# A door east of one south
+# A door an exit
+
+# We have a door is.. and exit is... a hoplite is....
+def get_follow_on_directions(tokens: list[str], current_index: str, direction_stack: list[int, str]):
+    done = False
+    while not done and current_index+1 < len(tokens):
+        tokens[current_index+1].split(" ")
+
+
+    return current_index
