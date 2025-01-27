@@ -464,6 +464,10 @@ def run_parser(lines: list[str]) -> list[str]:
 def watch_files(filename: str):
     last_update_time = os.stat(filename).st_mtime
 
+    with open("test/mapdoortext.log") as f:
+        run_parser(f.readlines())
+        return
+
     with open(filename, "r") as f:
         while True:
             new_time = os.stat(filename).st_mtime
