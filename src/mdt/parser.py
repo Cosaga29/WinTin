@@ -8,7 +8,7 @@ from definitions import (
     DIRECTION_MAP,
     IGNORE_TOKENS,
 )
-from patterns import PLAYER_COLOR, PLAYER_COLOR_2
+from patterns import PLAYER_NAME_MATCH
 from config import MdtColors
 
 
@@ -92,17 +92,10 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
 
         # See if this entity has special codes associated with it
         if entity.startswith("\x1b"):
-            # Check that the code matches a player coloring code
-            if s := re.search(PLAYER_COLOR, entity):
-                if len(s.groups()) > 0:
-                    e.count = 1
-                    e.description = s.groups()[0]
-                    e.curse_color_code = MdtColors.GREEN.value
-            elif s := re.search(PLAYER_COLOR_2, entity):
-                if len(s.groups()) > 0:
-                    e.count = 1
-                    e.description = s.groups()[0]
-                    e.curse_color_code = MdtColors.GREEN.value
+            if s := re.match(PLAYER_NAME_MATCH, entity):
+                s.groups()[0]
+                e.description = s.groups()[0]
+                e.curse_color_code = MdtColors.GREEN.value
         else:
             for word in entity.split(" "):
                 if word in NUMBER_MAP:

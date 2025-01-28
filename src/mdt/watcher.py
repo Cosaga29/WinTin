@@ -184,8 +184,9 @@ def watch_files(filename: str):
     last_update_time = os.stat(filename).st_mtime
 
     # TESTING ONLY
-    with open("test/mapdoortext.log") as f:
-        to_mdt_rooms(f.readlines())
+    #with open("test/mapdoortext.log") as f:
+    #    to_mdt_rooms(f.readlines())
+    #    pass
 
     with open(filename, "r") as f:
         while True:
