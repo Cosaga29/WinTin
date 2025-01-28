@@ -3,11 +3,7 @@ import re
 from patterns import (
     TINTIN_ARRAY_BEGIN,
     TINTIN_ARRAY_BETWEEN,
-    QUEUED_COMMAND_TEXT,
-    MDT_COMMAND_QUEUE,
-    TINTIN_COMMAND,
-    TINTIN_COMMAND_TEXT,
-    QUEUED_COMMAND_REGEX
+    CLIENT_ASYNC_TOKENS
 )
 
 
@@ -33,6 +29,8 @@ def transform_tintin_array(tt_array: str) -> str:
     Returns:
         str: The transformed string
     """
+    # Narrow down our problem space by a significant amount. In the MDT 
+    # output, our target sentence is going to be right biased in the array
     end_punctuation = tt_array.rfind(".")
     previous_punctuation = max(
         [
@@ -42,20 +40,19 @@ def transform_tintin_array(tt_array: str) -> str:
             tt_array.rfind("?", 0, end_punctuation),
         ]
     )
+    last_sentence = tt_array[previous_punctuation+1 : end_punctuation]
 
-    last_sentence = tt_array[previous_punctuation + 1 : end_punctuation]
+    # Remove tokens that can appear in the tintin output between 'mt' being entered
+    # and map text being written
+    # Keep these regex matches quick by first matching and only replacing 1 occurance
+    for token in CLIENT_ASYNC_TOKENS:
+        if re.match(token, last_sentence):
+            last_sentence = re.sub(token, "", last_sentence, 1)
+            # Optimization since these tokens are mutally exclusive
+            break
 
-    # Replace {101} with " "
-    mdt_line = re.sub(QUEUED_COMMAND_REGEX, "", last_sentence, 1)
-    mdt_line = re.sub(TINTIN_ARRAY_BETWEEN, " ", mdt_line)
+    # The expensive ones :(. But on a reduced input :)
+    mdt_line = re.sub(TINTIN_ARRAY_BETWEEN, " ", last_sentence)
     mdt_line = re.sub(TINTIN_ARRAY_BEGIN, "", mdt_line)
-
-    # Fast optimization checks here attempting to catch common things that might
-    # slip in client side before the buffer is written to file. Queued command and > seem
-    # to be all that interferes atm
-    if mdt_line.startswith(QUEUED_COMMAND_TEXT):
-        mdt_line = re.sub(MDT_COMMAND_QUEUE, "", mdt_line, count=1)
-    if mdt_line.startswith(TINTIN_COMMAND_TEXT):
-        mdt_line = re.sub(TINTIN_COMMAND, "", mdt_line, count=1)
 
     return mdt_line.lstrip().rstrip().lstrip("{").rstrip("}")
