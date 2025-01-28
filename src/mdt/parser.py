@@ -207,9 +207,15 @@ class MdtContextParser:
                 self.state = MdtContextParser.State.GET_TOKEN
                 return
 
+            # one south and one east
             if words[0] in NUMBER_MAP and words[1] in DIRECTION_MAP:
-                self.directions = fragments[0]
-                self.state = MdtContextParser.State.ADD_DIRECTIONS
+                # Directions only make sense if we have entities to relate them too
+                if len(self.entity_stack) > 0:
+                    self.directions = fragments[0]
+                    self.state = MdtContextParser.State.ADD_DIRECTIONS
+                else:
+                    self.token_idx += 1
+                    self.state = MdtContextParser.State.GET_TOKEN
                 return
             else:
                 # Has to be an entity
@@ -228,6 +234,10 @@ class MdtContextParser:
 
     def add_directions(self):
         push_directions(self.directions, self.direction_stack)
+        # Last direction detected
+        if len(self.entity_stack) > 0 and "and" in self.directions:
+            self.push_room()
+
         self.state = MdtContextParser.State.GET_TOKEN
         self.token_idx += 1
 
@@ -238,6 +248,10 @@ class MdtContextParser:
 
         push_entities(self.entities, self.entity_stack)
         push_directions(self.directions, self.direction_stack)
+        # Last direction detected
+        if len(self.entity_stack) > 0 and "and" in self.directions:
+            self.push_room()
+
         self.token_idx += 1
         self.state = MdtContextParser.State.GET_TOKEN
 
