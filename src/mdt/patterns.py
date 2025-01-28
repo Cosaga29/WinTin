@@ -9,10 +9,8 @@ PLAYER_NAME_MATCH = re.compile(r"\x1b.*?\x1b\[.*?m(.*?)\x1b.*\x1b")
 
 # Note that these are messages that might creep that 
 # normal punctionation might not pick up on
-QUEUED_COMMAND_REGEX = re.compile(r"[0-9]+}{Queued command: .*?}{[0-9]+}{?")
-HP_MONITOR_REGEX = re.compile(r"}{Hp: .*?}{[0-9]+}{")
-CURSOR_REGEX = re.compile(r"}> {[0-9]+}{")
-ALT_CURSOR_REGEX = re.compile(r"{[0-9]+}{> }{[0-9]+}{")
-COMBINED_REGEX = re.compile(r"{[0-9]+}{Queued command: .*?}{[0-9]+}{> }{[0-9]+}")
+QUEUED_COMMAND_REGEX = re.compile(r".*?Queued command: .*?}{[0-9]+}")
+HP_MONITOR_REGEX = re.compile(r".*?Hp: .*?}{[0-9]+}")
+CURSOR_REGEX = re.compile(r".*?> {[0-9]+}")
 
-CLIENT_ASYNC_TOKENS = [QUEUED_COMMAND_REGEX, HP_MONITOR_REGEX, CURSOR_REGEX, ALT_CURSOR_REGEX, COMBINED_REGEX]
+CLIENT_ASYNC_TOKENS = [QUEUED_COMMAND_REGEX, HP_MONITOR_REGEX, CURSOR_REGEX]
