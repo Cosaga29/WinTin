@@ -183,11 +183,6 @@ def to_mdt_rooms(lines: list[str]) -> list[str]:
 def watch_files(filename: str):
     last_update_time = os.stat(filename).st_mtime
 
-    # Uncomment if testing
-    with open("./test/2.log") as f:
-        to_mdt_rooms(f.readlines())
-        return
-
     with open(filename, "r") as f:
         while True:
             new_time = os.stat(filename).st_mtime
