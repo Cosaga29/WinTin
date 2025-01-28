@@ -200,6 +200,12 @@ class MdtContextParser:
                 self.entities = fragments[0]
                 self.state = MdtContextParser.State.ADD_ENTITIES
                 return
+            
+            # Skip this token
+            if words[0] in DIRECTION_MAP:
+                self.token_idx += 1
+                self.state = MdtContextParser.State.GET_TOKEN
+                return
 
             if words[0] in NUMBER_MAP and words[1] in DIRECTION_MAP:
                 self.directions = fragments[0]

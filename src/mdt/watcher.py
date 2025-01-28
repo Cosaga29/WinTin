@@ -172,7 +172,7 @@ def to_mdt_rooms(lines: list[str]) -> list[str]:
             mdt_line = transform_tintin_array(mdt_line)
 
         reader = MdtContextParser(mdt_line)
-        mdt_data = reader.read(mdt_line)
+        mdt_data = reader.read()
         mdt_data = apply_match_configs(mdt_data)
         write_rooms_to_console(mdt_data)
     except Exception as e:
@@ -182,6 +182,11 @@ def to_mdt_rooms(lines: list[str]) -> list[str]:
 
 def watch_files(filename: str):
     last_update_time = os.stat(filename).st_mtime
+
+    # Uncomment if testing
+    #with open("./test/mapdoortext.log") as f:
+    #    to_mdt_rooms(f.readlines())
+    #    return
 
     with open(filename, "r") as f:
         while True:
