@@ -26,7 +26,7 @@ from patterns import (
     TINTIN_ARRAY_BEGIN,
     TINTIN_ARRAY_BETWEEN,
     MDT_COMMAND_QUEUE,
-    PLAYER_COLOR,
+    PLAYER_NAME_MATCH,
     MDT_CURSOR
 )
 
@@ -165,7 +165,7 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
         # See if this entity has special codes associated with it
         if entity.startswith("\x1b"):
             # Check that the code matches a player coloring code
-            if s := re.search(PLAYER_COLOR, entity):
+            if s := re.search(PLAYER_NAME_MATCH, entity):
                 if len(s.groups()) > 0:
                     e.count = 1
                     e.description = s.groups()[0]
