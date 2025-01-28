@@ -7,6 +7,7 @@ from patterns import (
     MDT_COMMAND_QUEUE,
     TINTIN_COMMAND,
     TINTIN_COMMAND_TEXT,
+    QUEUED_COMMAND_REGEX
 )
 
 
@@ -45,7 +46,8 @@ def transform_tintin_array(tt_array: str) -> str:
     last_sentence = tt_array[previous_punctuation + 1 : end_punctuation]
 
     # Replace {101} with " "
-    mdt_line = re.sub(TINTIN_ARRAY_BETWEEN, " ", last_sentence)
+    mdt_line = re.sub(QUEUED_COMMAND_REGEX, "", last_sentence, 1)
+    mdt_line = re.sub(TINTIN_ARRAY_BETWEEN, " ", mdt_line)
     mdt_line = re.sub(TINTIN_ARRAY_BEGIN, "", mdt_line)
 
     # Fast optimization checks here attempting to catch common things that might
