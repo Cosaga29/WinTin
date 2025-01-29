@@ -98,6 +98,22 @@
     sheathe quill;
 };
 
+#alias {tearp}
+{
+    get book from pack;
+    tear page from book;
+    put book in pack;
+};
+
+#alias {scrm %1}
+{
+    draw quill;
+    scribe %1 on paper with quill;
+    sheathe quill;
+    hold daggers;
+    give scroll to masume;
+};
+
 #alias {sd}
 {
     put daggers in pack;
