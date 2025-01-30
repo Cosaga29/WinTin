@@ -26,7 +26,8 @@ from patterns import (
     TINTIN_ARRAY_BEGIN,
     TINTIN_ARRAY_BETWEEN,
     MDT_COMMAND_QUEUE,
-    PLAYER_COLOR
+    PLAYER_NAME_MATCH,
+    MDT_CURSOR
 )
 
 
@@ -104,8 +105,12 @@ def transform_tintin_array(tt_array: str) -> str:
 
     # TODO: If this isn't good enough to catch all data that could potentialy
     # arrive between map door text and the output file being written, we'll
-    # have to make the above regex a bit smarter
-    mdt_line = re.sub(MDT_COMMAND_QUEUE, "", mdt_line, count=1)
+    # have to make the above regex a bit smarter. Alternatively, have
+    # tin tin write the last line in the buffer......
+    if mdt_line.startswith(MDT_COMMAND_QUEUE):
+        mdt_line = re.sub(MDT_COMMAND_QUEUE, "", mdt_line, count=1)
+    if mdt_line.startswith(">"):
+        mdt_line = re.sub(MDT_CURSOR)
 
     return mdt_line.lstrip().rstrip().lstrip("{").rstrip("}")
 
@@ -160,7 +165,7 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
         # See if this entity has special codes associated with it
         if entity.startswith("\x1b"):
             # Check that the code matches a player coloring code
-            if s := re.search(PLAYER_COLOR, entity):
+            if s := re.search(PLAYER_NAME_MATCH, entity):
                 if len(s.groups()) > 0:
                     e.count = 1
                     e.description = s.groups()[0]

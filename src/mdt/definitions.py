@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 
 
 class ConfigEntry(NamedTuple):
+    is_regex: bool
     pattern: re.Pattern | str
     terminal_color_code: str
     curses_color_code: int
