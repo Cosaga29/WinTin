@@ -195,7 +195,7 @@ def main(stdscr: curses.window, filename: str):
     last_update_time = os.stat(filename).st_mtime
 
     # TESTING ONLY
-    #with open("test/mapdoortext.log") as f:
+    # with open("test/mapdoortext.log") as f:
     #    to_mdt_rooms(f.readlines())
     #    pass
 
@@ -211,17 +211,4 @@ def main(stdscr: curses.window, filename: str):
             if new_time != last_update_time:
                 last_update_time = new_time
                 to_mdt_rooms(stdscr, f.readlines())
-                f.seek(0)
-
-            time.sleep(0.2)
-
-
-if __name__ == "__main__":
-    try:
-        mdt_log_path = os.path.abspath(
-            os.path.join(MDT_PARSE_DIR, "../../logs/mapdoortext.log")
-        )
-
-        curses.wrapper(main, mdt_log_path)
-    except Exception as e:
-        _LOGGER.error(e)
+                f.seek
