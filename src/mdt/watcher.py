@@ -180,7 +180,7 @@ def to_mdt_rooms(stdscr: curses.window, lines: list[str]) -> list[str]:
         write_rooms_to_console(stdscr, mdt_data)
     except Exception as e:
         _LOGGER.error(e)
-        write_rooms_to_console({})
+        write_rooms_to_console(stdscr, {})
 
 
 def main(stdscr: curses.window, filename: str):

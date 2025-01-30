@@ -7,7 +7,7 @@ TINTIN_ARRAY_BEGIN = re.compile(r"\d+}{")
 # Player color matching. Depending on the terminals these might need adjusted
 PLAYER_NAME_MATCH = re.compile(r"\x1b.*?\x1b\[.*?m(.*?)\x1b.*\x1b")
 
-# Note that these are messages that might creep that
+# Note that these are messages that might creep that 
 # normal punctionation might not pick up on
 QUEUED_COMMAND_REGEX = re.compile(r".*?Queued command: .*?}{[0-9]+}")
 HP_MONITOR_REGEX = re.compile(r".*?Hp: .*?}{[0-9]+}")
