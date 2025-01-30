@@ -1,10 +1,6 @@
 import re
 
-from patterns import (
-    TINTIN_ARRAY_BEGIN,
-    TINTIN_ARRAY_BETWEEN,
-    CLIENT_ASYNC_TOKENS
-)
+from patterns import TINTIN_ARRAY_BEGIN, TINTIN_ARRAY_BETWEEN, CLIENT_ASYNC_TOKENS
 
 
 def is_tintin_array(line: str) -> bool:
@@ -29,7 +25,7 @@ def transform_tintin_array(tt_array: str) -> str:
     Returns:
         str: The transformed string
     """
-    # Narrow down our problem space by a significant amount. In the MDT 
+    # Narrow down our problem space by a significant amount. In the MDT
     # output, our target sentence is going to be right biased in the array
     end_punctuation = tt_array.rfind(".")
     previous_punctuation = max(
@@ -40,7 +36,7 @@ def transform_tintin_array(tt_array: str) -> str:
             tt_array.rfind("?", 0, end_punctuation),
         ]
     )
-    last_sentence = tt_array[previous_punctuation+1 : end_punctuation]
+    last_sentence = tt_array[previous_punctuation + 1 : end_punctuation]
 
     # Remove tokens that can appear in the tintin output between 'mt' being entered
     # and map text being written

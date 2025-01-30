@@ -110,12 +110,12 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
 
 class MdtContextParser:
     class State(Enum):
-        DONE = 1
+        DONE = 20
         ADD_ENTITIES = 2
         ADD_DIRECTIONS = 3
-        EVAL_TOKEN = 4
-        ADD_ENTITIES_AND_DIRECTIONS = 5
-        GET_TOKEN = 6
+        EVAL_TOKEN = 1
+        ADD_ENTITIES_AND_DIRECTIONS = 4
+        GET_TOKEN = 0
 
     def __init__(self, line: str):
         self.tokens = self._precondition_lines(line)
@@ -136,13 +136,13 @@ class MdtContextParser:
         self.entities = ""
         self.directions = ""
 
-        self.state_executor = {
-            MdtContextParser.State.GET_TOKEN: self.get_next_token,
-            MdtContextParser.State.EVAL_TOKEN: self.evaluate_token,
-            MdtContextParser.State.ADD_ENTITIES: self.add_entities,
-            MdtContextParser.State.ADD_DIRECTIONS: self.add_directions,
-            MdtContextParser.State.ADD_ENTITIES_AND_DIRECTIONS: self.parse_entities_and_dir,
-        }
+        self.lookup_table = [
+            self.get_next_token,
+            self.evaluate_token,
+            self.add_entities,
+            self.add_directions,
+            self.parse_entities_and_dir,
+        ]
 
     def _precondition_lines(self, line: str):
         # Convert everything to lowercase for matching purposes
@@ -168,7 +168,7 @@ class MdtContextParser:
     def read(self) -> dict[tuple[tuple[int, str]], RoomInfo]:
         self.state = MdtContextParser.State.GET_TOKEN
         while self.state != MdtContextParser.State.DONE:
-            self.state_executor[self.state]()
+            self.lookup_table[self.state.value]()
 
         if len(self.entity_stack) > 0 and len(self.direction_stack) > 0:
             self.push_room()
@@ -198,7 +198,7 @@ class MdtContextParser:
                 self.entities = fragments[0]
                 self.state = MdtContextParser.State.ADD_ENTITIES
                 return
-            
+
             # Skip this token
             if words[0] in DIRECTION_MAP:
                 self.token_idx += 1

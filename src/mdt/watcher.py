@@ -4,7 +4,6 @@ import logging
 import curses
 import time
 import os
-import re
 
 from definitions import (
     RoomInfo,
@@ -28,7 +27,9 @@ logging.basicConfig(
 _LOGGER = logging.getLogger(__name__)
 
 
-def write_rooms_to_console(room_data: dict[tuple[int, str], RoomInfo]):
+def write_rooms_to_console(
+    stdscr: curses.window, room_data: dict[tuple[int, str], RoomInfo]
+):
     """Writes the rooms to the terminal.
 
     Args:
@@ -135,18 +136,20 @@ def apply_match_configs(
 
             for match in USER_MATCHES:
                 # If pattern is a string, just search in string
-                if (
-                    isinstance(match.pattern, str)
-                    and match.pattern in entity.description
-                ) or (
-                    isinstance(match.pattern, re.Pattern)
-                    and match.pattern.match(entity.description)
-                ):
-                    # Score = score per entity * entity count
-                    entity.score = match.score
-                    entity_score = match.score * entity.count
-                    entity.curse_color_code = match.curses_color_code
-                    break
+                if match.is_regex:
+                    if match.pattern.match(entity.description):
+                        # Score = score per entity * entity count
+                        entity.score = match.score
+                        entity_score = match.score * entity.count
+                        entity.curse_color_code = match.curses_color_code
+                        break
+                else:
+                    if match.pattern in entity.description:
+                        # Score = score per entity * entity count
+                        entity.score = match.score
+                        entity_score = match.score * entity.count
+                        entity.curse_color_code = match.curses_color_code
+                        break
 
             room_score += entity_score
 
@@ -162,7 +165,7 @@ def apply_match_configs(
     return filtered_rooms
 
 
-def to_mdt_rooms(lines: list[str]) -> list[str]:
+def to_mdt_rooms(stdscr: curses.window, lines: list[str]) -> list[str]:
     # The output from tt++ is always a single line
     try:
         mdt_line = lines[0]
@@ -174,19 +177,25 @@ def to_mdt_rooms(lines: list[str]) -> list[str]:
         reader = MdtContextParser(mdt_line)
         mdt_data = reader.read()
         mdt_data = apply_match_configs(mdt_data)
-        write_rooms_to_console(mdt_data)
+        write_rooms_to_console(stdscr, mdt_data)
     except Exception as e:
         _LOGGER.error(e)
         write_rooms_to_console({})
 
 
-def watch_files(filename: str):
+def main(stdscr: curses.window, filename: str):
+    curses.curs_set(0)
+
     last_update_time = os.stat(filename).st_mtime
 
     # TESTING ONLY
-    #with open("test/mapdoortext.log") as f:
-    #    to_mdt_rooms(f.readlines())
-    #    pass
+    with open("test/mapdoortext.log") as f:
+        to_mdt_rooms(f.readlines())
+        pass
+
+    # Initialize MDT color pairs after we've initialized the curse screen
+    for mdt_color, curses_color_pair in CURSES_COLOR_PAIR_MAP.items():
+        curses.init_pair(mdt_color.value, curses_color_pair[0], curses_color_pair[1])
 
     with open(filename, "r") as f:
         while True:
@@ -195,7 +204,7 @@ def watch_files(filename: str):
             # If the files modified time has changed, run the parser
             if new_time != last_update_time:
                 last_update_time = new_time
-                to_mdt_rooms(f.readlines())
+                to_mdt_rooms(stdscr, f.readlines())
                 f.seek(0)
 
             time.sleep(0.2)
@@ -203,27 +212,10 @@ def watch_files(filename: str):
 
 if __name__ == "__main__":
     try:
-        stdscr = curses.initscr()
-        curses.start_color()
-        curses.use_default_colors()
-        curses.curs_set(0)
-
-        # Initialize MDT color pairs after we've initialized the curse screen
-        for mdt_color, curses_color_pair in CURSES_COLOR_PAIR_MAP.items():
-            curses.init_pair(
-                mdt_color.value, curses_color_pair[0], curses_color_pair[1]
-            )
-
         mdt_log_path = os.path.abspath(
             os.path.join(MDT_PARSE_DIR, "../../logs/mapdoortext.log")
         )
 
-        watch_files(mdt_log_path)
+        curses.wrapper(main, mdt_log_path)
     except Exception as e:
         _LOGGER.error(e)
-    finally:
-        # Cleanup
-        curses.nocbreak()
-        stdscr.keypad(False)
-        curses.echo()
-        curses.endwin()
