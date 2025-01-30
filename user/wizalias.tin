@@ -1,0 +1,190 @@
+#alias {cash}
+{
+    count ash in pack;
+};
+
+#alias {cboss}
+{
+    cast a on boss;
+};
+
+#alias {cfg}
+{
+    cast Pragi's Fiery Gaze;
+};
+
+#alias {cfm %1} 
+{
+    get mirror from pack;
+    cast Floron's Fabulous Mirror on %1;
+    gaze into mirror;
+    put mirror in pack;
+};
+
+#alias {cgrf}
+{
+    cast a on grflx;
+};
+
+#alias {dd}
+{
+    get daggers from pack;
+    hold daggers;
+};
+
+#alias {ge} 
+{
+    get eyes from corpses;
+};
+
+#alias {gep}
+{
+    get eyes from corpses;
+    put eyes in pack;
+};
+
+#alias {gfpthn %1}
+{
+    get %1, heavy-duty needle from pack;
+};
+
+#alias {gfptn %1}
+{
+    get %1, silver needle from pack
+};
+
+#alias {hd} 
+{
+    hold daggers;
+};
+
+#alias {hn}
+{
+    hold needle;
+};
+
+#alias {od}
+{
+    open door;
+    l enter door;
+};
+
+#alias {piptn}
+{
+    put spools,needles in pack;
+};
+
+#alias {port %1}
+{
+    cast jpct on %1;
+};
+
+#alias {portp %1}
+{
+    get %1 from belt;
+    cast jpct on %1;
+    put %1 in belt;
+};
+
+#alias {re}
+{
+    recover eyes from corpses;
+};
+
+#alias {scr %1}
+{
+    draw quill;
+    scribe %1 on paper with quill;
+    sheathe quill;
+};
+
+#alias {tearp}
+{
+    get book from pack;
+    tear page from book;
+    put book in pack;
+};
+
+#alias {scrm %1}
+{
+    draw quill;
+    scribe %1 on paper with quill;
+    sheathe quill;
+    hold daggers;
+    give scroll to masume;
+};
+
+#alias {sd}
+{
+    put daggers in pack;
+};
+
+#alias {sewi %1}
+{
+    sew %1 with needle;
+};
+
+#alias {slsf}
+{
+    slash opponent in the face with dagger 1;
+    slash opponent in the face with dagger 2;
+};
+
+#alias {ss}
+{
+    search stream;
+};
+
+#alias {st}
+{
+    squeeze tree;
+    get ball;
+};
+
+#alias {healme}
+{
+    get bottle from pack;
+    taste bottle;
+    put bottle in pack;
+};
+
+#alias {stbh}
+{
+    stab opponent in the heart with weapon 1;
+    stab opponent in the heart with weapon 2;
+};
+
+#alias {thead}
+{
+    say Mister Teh-ah-tim-eh said to let me in or else.
+};
+
+#alias {threadn}
+{
+    pull thread from spool;
+    thread needle with thread;
+};
+
+#alias {tpa %1}
+{
+    cast Transcendent Pneumatic Alleviator on %1;
+};
+
+#alias {wamb %1}
+{
+    get %1 from belt;
+    cast Worstler's Advanced Metallurgical Glance on %1;
+    gaze into %1;
+    put %1 in belt;
+};
+
+#alias {wamg %1}
+{
+    cast Worstler's Advanced Metallurgical Glance on %1;
+    gaze into %1
+};
+
+#alias {swash}
+{
+    sweep ashes with broom;
+};
