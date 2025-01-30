@@ -136,7 +136,7 @@ class MdtContextParser:
         self.entities = ""
         self.directions = ""
 
-        self.lookup_table = [
+        self.lut = [
             self.get_next_token,
             self.evaluate_token,
             self.add_entities,
@@ -168,7 +168,7 @@ class MdtContextParser:
     def read(self) -> dict[tuple[tuple[int, str]], RoomInfo]:
         self.state = MdtContextParser.State.GET_TOKEN
         while self.state != MdtContextParser.State.DONE:
-            self.lookup_table[self.state.value]()
+            self.lut[self.state.value]()
 
         if len(self.entity_stack) > 0 and len(self.direction_stack) > 0:
             self.push_room()
