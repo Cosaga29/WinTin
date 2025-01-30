@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+import traceback
 import logging
 import curses
 import time
@@ -180,7 +182,8 @@ def to_mdt_rooms(stdscr: curses.window, lines: list[str]) -> list[str]:
         write_rooms_to_console(stdscr, mdt_data)
     except Exception as e:
         _LOGGER.error(e)
-        write_rooms_to_console({})
+        traceback.print_exc(file=sys.stdout)
+        write_rooms_to_console(stdscr, mdt_data)
 
 
 def main(stdscr: curses.window, filename: str):
