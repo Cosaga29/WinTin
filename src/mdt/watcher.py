@@ -2,7 +2,6 @@
 
 import logging
 import curses
-import time
 import os
 
 from definitions import (
@@ -212,3 +211,14 @@ def main(stdscr: curses.window, filename: str):
                 last_update_time = new_time
                 to_mdt_rooms(stdscr, f.readlines())
                 f.seek
+
+
+if __name__ == "__main__":
+    try:
+        mdt_log_path = os.path.abspath(
+            os.path.join(MDT_PARSE_DIR, "../../logs/mapdoortext.log")
+        )
+
+        curses.wrapper(main, mdt_log_path)
+    except Exception as e:
+        _LOGGER.error(e)
