@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import time
 import logging
 import curses
 import os
@@ -210,7 +211,9 @@ def main(stdscr: curses.window, filename: str):
             if new_time != last_update_time:
                 last_update_time = new_time
                 to_mdt_rooms(stdscr, f.readlines())
-                f.seek
+                f.seek(0)
+
+            time.sleep(0.2)
 
 
 if __name__ == "__main__":
