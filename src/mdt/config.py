@@ -73,7 +73,13 @@ def build_match_config(config: dict) -> list[ConfigEntry]:
                 curses_color_code = CONFIG_COLOR_MAP[match_entry[1]].value
 
         match_config_list.append(
-            ConfigEntry(pattern, terminal_color_code, curses_color_code, match_entry[2])
+            ConfigEntry(
+                match_entry[3],
+                pattern,
+                terminal_color_code,
+                curses_color_code,
+                match_entry[2],
+            )
         )
 
     return match_config_list
