@@ -189,9 +189,9 @@ def main(stdscr: curses.window, filename: str):
     last_update_time = os.stat(filename).st_mtime
 
     # TESTING ONLY
-    with open("test/mapdoortext.log") as f:
-        to_mdt_rooms(f.readlines())
-        pass
+    #with open("test/mapdoortext.log") as f:
+    #    to_mdt_rooms(f.readlines())
+    #    pass
 
     # Initialize MDT color pairs after we've initialized the curse screen
     for mdt_color, curses_color_pair in CURSES_COLOR_PAIR_MAP.items():
