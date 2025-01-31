@@ -1,14 +1,13 @@
 import curses
 import os
 from meter import DpsMeter
-from config import DpsConfig, WeaponType
+from config import DpsConfig
 
 
 base_config = DpsConfig(
-    include=["You", "Masume", "Learned Lyden"],
-    watch_path=os.path.join(os.path.dirname(__file__), "damage.log"),
-    poll_rate=0.2,
-    weapon_map={"You": [WeaponType.SHARP]}
+    include={"You", "Masume", "Learned Lyden"},
+    watch_path=os.path.join(os.path.dirname(__file__), "../../logs/combat.log"),
+    poll_rate=0.2
 )
 
 
