@@ -37,6 +37,8 @@
     #format {start_time} {%T};
     #format {check_time} {%T};
     #format {uptime[display]} {%th %tm} {11} {0};
+
+    #SYSTEM {truncate -s 0 logs/combat.log};
 }
 
 #var {previous_xp} {0};

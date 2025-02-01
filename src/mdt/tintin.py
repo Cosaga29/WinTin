@@ -36,7 +36,7 @@ def transform_tintin_array(tt_array: str) -> str:
             tt_array.rfind("?", 0, end_punctuation),
         ]
     )
-    last_sentence = tt_array[previous_punctuation+1 : end_punctuation]
+    last_sentence = tt_array[previous_punctuation + 1 : end_punctuation]
 
     # Remove tokens that can appear in the tintin output between 'mt' being entered
     # and map text being written

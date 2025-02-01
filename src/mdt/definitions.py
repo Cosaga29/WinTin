@@ -23,6 +23,7 @@ class EntityInfo:
 @dataclass
 class RoomInfo:
     score: int = 0
+    has_player: bool = False
     entities: list[EntityInfo] = field(default_factory=list)
 
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
+import time
 import logging
 import curses
-import time
 import os
 
 from definitions import (
@@ -87,9 +87,12 @@ def write_rooms_to_console(
 
         if x + len(room_score_str) < max_x:
             # Add the [score]
-            stdscr.addstr(
-                y, x, room_score_str, curses.color_pair(MdtColors.CYAN_BLACK.value)
+            color = (
+                curses.color_pair(MdtColors.YELLOW_BLACK.value)
+                if room_info.has_player
+                else curses.color_pair(MdtColors.CYAN_BLACK.value)
             )
+            stdscr.addstr(y, x, room_score_str, color)
             x += len(room_score_str)
         else:
             break
@@ -168,18 +171,24 @@ def apply_match_configs(
 def to_mdt_rooms(stdscr: curses.window, lines: list[str]) -> list[str]:
     # The output from tt++ is always a single line
     try:
-        mdt_line = lines[0]
-        if is_tintin_array(mdt_line):
-            # Parses the last element of the tintin array output as the
-            # manual map door text line
-            mdt_line = transform_tintin_array(mdt_line)
+        mdt_data = {}
+        if len(lines) > 0:
+            mdt_line = lines[0]
+            if is_tintin_array(mdt_line):
+                # Parses the last element of the tintin array output as the
+                # manual map door text line
+                mdt_line = transform_tintin_array(mdt_line)
 
-        reader = MdtContextParser(mdt_line)
-        mdt_data = reader.read()
-        mdt_data = apply_match_configs(mdt_data)
+            reader = MdtContextParser(mdt_line)
+            mdt_data = reader.read()
+            mdt_data = apply_match_configs(mdt_data)
         write_rooms_to_console(stdscr, mdt_data)
     except Exception as e:
+        _LOGGER.error("Exception while parsing MDT lines!")
         _LOGGER.error(e)
+        _LOGGER.error("------------MDT------------")
+        _LOGGER.error(lines[0])
+        _LOGGER.error("------------MDT------------")
         write_rooms_to_console(stdscr, {})
 
 
@@ -189,7 +198,7 @@ def main(stdscr: curses.window, filename: str):
     last_update_time = os.stat(filename).st_mtime
 
     # TESTING ONLY
-    #with open("test/mapdoortext.log") as f:
+    # with open("test/mapdoortext.log") as f:
     #    to_mdt_rooms(f.readlines())
     #    pass
 

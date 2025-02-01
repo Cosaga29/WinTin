@@ -1,6 +1,8 @@
 #CLASS {combat} {kill};
 #CLASS {combat} {open};
 
+#showme combat loaded;
+
 #VARIABLE {my_attacks_color} {orange};
 #VARIABLE {enemy_attack_color} {red};
 
