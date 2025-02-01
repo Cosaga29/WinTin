@@ -7,7 +7,7 @@ from config import DpsConfig
 base_config = DpsConfig(
     include={"You", "Masume", "Learned Lyden"},
     watch_path=os.path.join(os.path.dirname(__file__), "../../logs/combat.log"),
-    poll_rate=0.2
+    poll_rate=0.2,
 )
 
 

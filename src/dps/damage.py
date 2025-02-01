@@ -13,6 +13,7 @@ class DamageEntry(NamedTuple):
     matcher: re.Pattern
     damage: float
 
+
 DIRKS = re.compile(r"jagged coral dirk")
 FANGS = re.compile(r"sea serpent fang")
 KATANA = re.compile(r"katana")
@@ -21,7 +22,7 @@ KATANA = re.compile(r"katana")
 WEAPON_DAMAGE_TABLE: list[tuple[re.Pattern, WeaponType]] = [
     (DIRKS, WeaponType.SHARP),
     (FANGS, WeaponType.PIERCE_STAB),
-    (KATANA, WeaponType.SHARP_SLICE)
+    (KATANA, WeaponType.SHARP_SLICE),
 ]
 
 
@@ -58,5 +59,5 @@ DAMAGE_TABLE: list[list[DamageEntry]] = [
         DamageEntry(matcher=re.compile(r"(.*?) takes a sliver off"), damage=180),
         DamageEntry(matcher=re.compile(r"(.*?) slices (.*?) deeply"), damage=220),
         DamageEntry(matcher=re.compile(r"(.*?) neatly fillets"), damage=500),
-    ]
+    ],
 ]

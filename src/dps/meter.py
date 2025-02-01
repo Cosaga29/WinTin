@@ -20,17 +20,15 @@ class DpsMeter:
         for entity in self._entities:
             self._stats[entity] = 0
 
-
     def start(self):
         self._run()
 
-
     def _run(self):
-        #last_update_time = os.stat(self._fp).st_mtime
+        # last_update_time = os.stat(self._fp).st_mtime
 
         with open(self._fp, "r") as f:
             while True:
-                #new_time = os.stat(self._fp).st_mtime
+                # new_time = os.stat(self._fp).st_mtime
                 line = f.readline()
                 if not line:
                     time.sleep(0.1)
@@ -40,17 +38,14 @@ class DpsMeter:
 
                 time.sleep(self._poll_rate)
 
-
     def reset(self):
         for entity in self._stats.keys():
             self._stats[entity] = 0
 
         self._round_count = 1
-    
 
     def _calc_power_attack(self, line: str, entity: str):
         return 1000
-
 
     def _calc_round_damage(self, line: str, entity: str) -> int:
         # Get what weapon type is being used
@@ -67,9 +62,8 @@ class DpsMeter:
         for entry in damage_table:
             if entry.matcher.match(line):
                 return entry.damage
-                
-        return 0
 
+        return 0
 
     def _calc_damage(self, line: str) -> bool:
         # Search through each entity we're interested in to see if the line matches
@@ -79,13 +73,12 @@ class DpsMeter:
                 if POWER_ATTACK.match(line):
                     self._stats[entity] += self._calc_power_attack(line, entity)
                     return True
-                
+
                 # Calc base round damage
                 self._stats[entity] += self._calc_round_damage(line, entity)
                 return True
 
         return False
-
 
     def _update(self, lines: list[str]):
         for line in lines:
@@ -97,7 +90,6 @@ class DpsMeter:
             # Found damage for this line
             if self._calc_damage(line):
                 continue
-
 
     def _draw(self):
         self._screen.clear()
@@ -113,7 +105,9 @@ class DpsMeter:
         self._screen.addstr(0, 0, f"[DPR Meter]     Total Rounds: {self._round_count}")
 
         y = 1
-        for player, damage in sorted(self._stats.items(), key=lambda x: x[1], reverse=True):
+        for player, damage in sorted(
+            self._stats.items(), key=lambda x: x[1], reverse=True
+        ):
             x = 0
             player_tag = f"[{player}]: "
             self._screen.addstr(y, 0, player_tag)
