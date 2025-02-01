@@ -71,7 +71,7 @@ def push_directions(dir_token_string: str, directions: list[tuple[int, str]]) ->
     return is_last_dir
 
 
-def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
+def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]) -> bool:
     """Method that adds the entity token string to the MDT room data using the entities that
     have not been associated.
 
@@ -80,6 +80,7 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
         entity_stack (list[EntityInfo]): The list of entities that we've seen so far
     """
     # an adorable slave, a grey and blue rat and a grinning young man and two strong men and a blue and purple man
+    room_had_player = False
 
     # Separate entities by 'and'
     entity_token_string = entity_token_string.split(" and ")
@@ -96,6 +97,7 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
                 s.groups()[0]
                 e.description = s.groups()[0]
                 e.curse_color_code = MdtColors.GREEN.value
+                room_had_player = True
         else:
             for word in entity.split(" "):
                 if word in NUMBER_MAP:
@@ -106,6 +108,8 @@ def push_entities(entity_token_string: str, entity_stack: list[EntityInfo]):
 
             e.description = e.description.rstrip()
         entity_stack.append(e)
+
+    return room_had_player
 
 
 class MdtContextParser:
@@ -126,6 +130,7 @@ class MdtContextParser:
         self.num_tokens = len(self.tokens)
         self.token_idx = 0
         self.token: str = ""
+        self.room_has_player = False
 
         self.state = MdtContextParser.State.DONE
         self.mdt_rooms: dict[tuple[tuple[int, str]], RoomInfo] = {}
@@ -226,7 +231,7 @@ class MdtContextParser:
         if len(self.direction_stack) > 0:
             self.push_room()
 
-        push_entities(self.entities, self.entity_stack)
+        self.room_has_player = push_entities(self.entities, self.entity_stack)
         self.state = MdtContextParser.State.GET_TOKEN
         self.token_idx += 1
 
@@ -244,7 +249,7 @@ class MdtContextParser:
         if len(self.direction_stack) > 0:
             self.push_room()
 
-        push_entities(self.entities, self.entity_stack)
+        self.room_has_player = push_entities(self.entities, self.entity_stack)
         push_directions(self.directions, self.direction_stack)
         # Last direction detected
         if len(self.entity_stack) > 0 and "and" in self.directions:
@@ -255,7 +260,9 @@ class MdtContextParser:
 
     def push_room(self):
         room = RoomInfo()
+        room.has_player = self.room_has_player
         room.entities.extend(self.entity_stack)
         self.mdt_rooms[tuple(self.direction_stack)] = room
         self.direction_stack.clear()
         self.entity_stack.clear()
+        self.room_has_player = False

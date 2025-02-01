@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
+import time
 import logging
 import curses
-import time
 import os
 
 from definitions import (
@@ -87,9 +87,12 @@ def write_rooms_to_console(
 
         if x + len(room_score_str) < max_x:
             # Add the [score]
-            stdscr.addstr(
-                y, x, room_score_str, curses.color_pair(MdtColors.CYAN_BLACK.value)
+            color = (
+                curses.color_pair(MdtColors.YELLOW_BLACK.value)
+                if room_info.has_player
+                else curses.color_pair(MdtColors.CYAN_BLACK.value)
             )
+            stdscr.addstr(y, x, room_score_str, color)
             x += len(room_score_str)
         else:
             break
@@ -195,7 +198,7 @@ def main(stdscr: curses.window, filename: str):
     last_update_time = os.stat(filename).st_mtime
 
     # TESTING ONLY
-    #with open("test/mapdoortext.log") as f:
+    # with open("test/mapdoortext.log") as f:
     #    to_mdt_rooms(f.readlines())
     #    pass
 

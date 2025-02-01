@@ -1,5 +1,5 @@
 #VARIABLE watchOutput {false};
-#VARIABLE lastLine {};
+#VARIABLE logCombat {false};
 #VARIABLE buffer {};
 #list buffer {clear};
 
@@ -12,11 +12,32 @@
 
 #EVENT {RECEIVED LINE} 
 {
+    #if {"$logCombat" == "true"}
+    {
+        #regexp {%1} {^Hp:}
+        {
+            #LINE {log} {logs/combat.log} {%1};
+        };
+
+        #regexp {%1} {%*{viciously |messily |barely |neatly |}{thrust|snick|fillet|poke|chop up|chop|jab|scratch|boot|kick|hit|tickle|hack|prick|shred|nick|cut|stab|perforate|pierce|impale|slice|skewer|take}}
+        {
+            #LINE {log} {logs/combat.log} {%1};
+        };
+
+        #regexp {%1} {%*{viciously |messily |barely |neatly |}stab %1 {deeply |}in %2 with %3}
+        {
+            #LINE {log} {logs/combat.log} {%1};
+        };
+
+        #regexp {%1} {%*stab %1 right through %2's %3}
+        {
+            #LINE {log} {logs/combat.log} {%1};
+        };
+    };
+
     #if {"$watchOutput" == "true"}
     {
         #list {buffer} {add} {%1};
-
-        #LINE {log} {logs/buffer.log} {$buffer};
         
         #regexp {%1} {%*from here.$}
         {
