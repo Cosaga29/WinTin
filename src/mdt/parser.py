@@ -231,7 +231,7 @@ class MdtContextParser:
         if len(self.direction_stack) > 0:
             self.push_room()
 
-        self.room_has_player = push_entities(self.entities, self.entity_stack)
+        self.room_has_player |= push_entities(self.entities, self.entity_stack)
         self.state = MdtContextParser.State.GET_TOKEN
         self.token_idx += 1
 
@@ -249,7 +249,7 @@ class MdtContextParser:
         if len(self.direction_stack) > 0:
             self.push_room()
 
-        self.room_has_player = push_entities(self.entities, self.entity_stack)
+        self.room_has_player |= push_entities(self.entities, self.entity_stack)
         push_directions(self.directions, self.direction_stack)
         # Last direction detected
         if len(self.entity_stack) > 0 and "and" in self.directions:
