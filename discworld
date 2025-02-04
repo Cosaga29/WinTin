@@ -1,7 +1,7 @@
 cd /home/alex/WinTin
 
 # Check that we have a supported TMUX version
-tmux -V | grep 3.4
+tmux -V | grep -E '3.3a|3.4|3.2a'
 if [[ $(echo $?) != 0 ]]; then
     echo -e "Script only supports TMUX 3.4\n"
     exit 1
