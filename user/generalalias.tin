@@ -1,3 +1,43 @@
+#alias {nw}
+{
+    northwest;
+};
+
+#alias {ne}
+{
+    northeast;
+};
+
+#alias {se}
+{
+    southeast;
+};
+
+#alias {w}
+{
+    west;
+};
+
+#alias {e}
+{
+    east;
+}
+
+#alias {n}
+{
+    north;
+};
+
+#alias {s}
+{
+    south;
+};
+
+#alias {sw}
+{
+    southwest;
+};
+
 #alias {ba}
 {
     bury corpses;
