@@ -13,8 +13,6 @@
 #config {COMMAND COLOR} {<fcf>}; 
 #config {REPEAT ENTER} {ON};
 
-#SPLIT {2} {1};
-
 #READ {src/shades/shades.tin};
 
 #READ {src/colors.tin};
@@ -49,6 +47,8 @@
 #READ {user/macros.tin};
 
 #SESSION {discworld} {discworld.starturtle.net} {4242};
+
+#SPLIT {2} {1};
 
 #FORMAT {log_file} {logs/active/%t.log} {%Y-%m-%d};
 #LOG {APPEND} {$log_file};
