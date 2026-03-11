@@ -24,17 +24,13 @@
         #format {prompt_macromode} {%cMACRO%c} {<118>} {<098>};
     };
 
-    #if {$enable_vitals == "true"}
-    {
-        #nop Hp, hp, burden;
-        #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
-        #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
-        #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
-        #format {xp_color} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
-
-        #format {vitals} {%s%s%s%s%s%s%s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp_color};
-    };
+    #nop Hp, hp, burden;
+    #format {hp} {%cHP: %d%c} {@hp_col{$GMCP[vitals][hp]}} {$GMCP[vitals][hp]};
+    #format {gp} {%cGP: %d%c} {@gp_col{$GMCP[vitals][gp]}} {$GMCP[vitals][gp]};
+    #format {burden} {%cB%: %d%c} {@burden_col{$GMCP[vitals][burden]}} {$GMCP[vitals][burden]};
+    #format {xp_color} {%cXP: %G%c} {<FFFFFFF>} {$GMCP[vitals][xp]};
+    #format {vitals} {%s%s%s%s%s%s%s} {$hp} {$sep} {$gp} {$sep} {$burden} {$sep} {$xp_color};
 
     #format {prompt_line} { %s %+33s %+5s %+5s } {$vitals} {$prompt_xp} {$prompt_tpa} {$prompt_macromode};
-    #showme {$prompt_line} {-1};
+    #showme {$prompt_line} {1};
 }

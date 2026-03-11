@@ -13,7 +13,7 @@
 #config {COMMAND COLOR} {<fcf>}; 
 #config {REPEAT ENTER} {ON};
 
-#SPLIT {2} {1};
+#SPLIT {1};
 
 #READ {src/shades/shades.tin};
 
